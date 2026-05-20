@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>특별불량 개선활동 보고서</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 html {
     -webkit-text-size-adjust: 100%;
@@ -243,6 +244,65 @@ textarea {
     background: #c0392b;
 }
 .btn.btn-pdf:hover { background: #d44637; }
+.btn.btn-db {
+    background: #16a085;
+}
+.btn.btn-db:hover { background: #1abc9c; }
+.btn.btn-history {
+    background: #8e44ad;
+}
+.btn.btn-history:hover { background: #9b59b6; }
+
+/* DB 드롭다운 */
+.db-dropdown {
+    position: relative;
+    display: inline-block;
+}
+.db-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    background: #fff;
+    border: 1px solid #d6dde6;
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    min-width: 240px;
+    z-index: 500;
+    overflow: hidden;
+}
+.db-menu.active { display: block; }
+.db-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    background: #fff;
+    border: none;
+    padding: 12px 14px;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    color: #333;
+    border-bottom: 1px solid #f0f3f7;
+    transition: background 0.15s;
+}
+.db-menu-item:last-child { border-bottom: none; }
+.db-menu-item:hover { background: #f0f7f5; }
+.db-menu-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+}
+.db-menu-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a3a6c;
+}
+.db-menu-desc {
+    font-size: 11px;
+    color: #888;
+    margin-top: 2px;
+}
 .cause-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -770,6 +830,99 @@ input[type="file"] { display: none; }
     border-bottom: 2px solid #1a3a6c;
 }
 
+/* 이력 조회 */
+.history-filter {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.history-filter input {
+    flex: 1;
+    border: 1px solid #d6dde6;
+    padding: 9px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    background: #fff;
+}
+.history-filter input:focus {
+    outline: none;
+    border-color: #1a3a6c;
+}
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+.history-table th {
+    background: #1a3a6c;
+    color: #fff;
+    padding: 8px 6px;
+    text-align: center;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+}
+.history-table td {
+    padding: 8px 6px;
+    border-bottom: 1px solid #e8eef5;
+    text-align: center;
+}
+.history-table tbody tr {
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.history-table tbody tr:hover {
+    background: #fffbe6;
+}
+.history-table .col-doc-no { width: 130px; text-align: left; }
+.history-table .col-customer { width: 100px; }
+.history-table .col-part { width: 130px; text-align: left; }
+.history-table .col-date { width: 100px; }
+.history-table .col-status { width: 100px; }
+.history-table .col-action { width: 70px; }
+.history-row-btn {
+    background: #c0392b;
+    color: #fff;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 11px;
+}
+.history-row-btn:hover { background: #d44637; }
+.status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+}
+.status-badge.complete { background: #d4edda; color: #155724; }
+.status-badge.progress { background: #fff3cd; color: #856404; }
+.status-badge.pending { background: #f8d7da; color: #721c24; }
+.history-list-scroll {
+    max-height: 50vh;
+    overflow-y: auto;
+    border: 1px solid #d6dde6;
+    border-radius: 4px;
+}
+.loading-spinner {
+    text-align: center;
+    padding: 40px 20px;
+    color: #1a3a6c;
+}
+.loading-spinner::before {
+    content: "⏳";
+    font-size: 30px;
+    display: block;
+    margin-bottom: 10px;
+    animation: spin 1.5s linear infinite;
+}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 /* ============================
    모바일 세로 화면 대응
    ============================ */
@@ -1144,6 +1297,25 @@ input[type="file"] { display: none; }
         <strong style="color:#1a3a6c; font-size:14px;">📋 특별불량 개선활동 보고서</strong>
     </div>
     <div class="toolbar-right">
+        <div class="db-dropdown">
+            <button class="btn btn-db" onclick="toggleDBMenu(event)">☁️ DB ▾</button>
+            <div class="db-menu" id="dbMenu">
+                <button class="db-menu-item" onclick="saveToSupabase(); closeDBMenu();">
+                    <span class="db-menu-icon">💾</span>
+                    <div>
+                        <div class="db-menu-title">현재 보고서 저장</div>
+                        <div class="db-menu-desc">Supabase에 저장 / 수정</div>
+                    </div>
+                </button>
+                <button class="db-menu-item" onclick="openHistory(); closeDBMenu();">
+                    <span class="db-menu-icon">📋</span>
+                    <div>
+                        <div class="db-menu-title">이력 조회</div>
+                        <div class="db-menu-desc">저장된 보고서 목록</div>
+                    </div>
+                </button>
+            </div>
+        </div>
         <button class="btn btn-success" onclick="exportHTML()">📥 파일 저장</button>
         <button class="btn" onclick="window.print()">🖨️ 인쇄</button>
         <button class="btn btn-pdf" onclick="exportPDF()">📕 PDF 저장</button>
@@ -1538,6 +1710,29 @@ CREATE POLICY "Enable all access for master" ON special_defect_master FOR ALL US
     </div>
 </div>
 
+<!-- 이력 조회 모달 -->
+<div class="modal-overlay" id="historyModal">
+    <div class="modal-box" style="max-width:900px;">
+        <div class="modal-header">
+            <h2>📋 보고서 이력 조회</h2>
+            <button class="modal-close" onclick="closeHistory()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="history-filter">
+                <input type="text" id="historySearch" placeholder="🔍 문서번호 / 품번 / 고객사 / 작성자 검색..." onkeyup="renderHistoryList()">
+                <button class="btn" onclick="loadHistoryList()">🔄 새로고침</button>
+            </div>
+            <div id="historyListWrap">
+                <div class="master-empty">이력을 불러오려면 [새로고침] 버튼을 누르세요.</div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <span class="info-text">※ 행을 클릭하면 작성 화면에 불러옵니다.</span>
+            <button class="btn" onclick="closeHistory()">닫기</button>
+        </div>
+    </div>
+</div>
+
 <script>
 // =========================================
 // 0. 마스터 데이터 (발생부서/고객사/품번/발생공정)
@@ -1898,6 +2093,447 @@ function copySQL() {
     });
 }
 
+// =========================================
+// 3-1. Supabase 클라이언트 가져오기
+// =========================================
+let _supabaseClient = null;
+let _currentReportId = null; // 현재 편집 중인 보고서 ID (있으면 UPDATE, 없으면 INSERT)
+
+// DB 드롭다운 메뉴 토글
+function toggleDBMenu(event) {
+    event.stopPropagation();
+    const menu = document.getElementById('dbMenu');
+    menu.classList.toggle('active');
+}
+function closeDBMenu() {
+    document.getElementById('dbMenu').classList.remove('active');
+}
+// 외부 클릭 시 메뉴 닫기
+document.addEventListener('click', function(e) {
+    const menu = document.getElementById('dbMenu');
+    if (menu && menu.classList.contains('active') && !e.target.closest('.db-dropdown')) {
+        menu.classList.remove('active');
+    }
+});
+
+function getSupabase() {
+    if (_supabaseClient) return _supabaseClient;
+    
+    const raw = localStorage.getItem(SUPABASE_CONFIG_KEY);
+    if (!raw) {
+        alert('⚠️ Supabase 설정이 없습니다.\n⚙️ 설정에서 URL과 Anon Key를 입력하세요.');
+        return null;
+    }
+    const cfg = JSON.parse(raw);
+    if (!cfg.url || !cfg.key) {
+        alert('⚠️ Supabase URL 또는 Key가 비어있습니다.');
+        return null;
+    }
+    if (typeof supabase === 'undefined') {
+        alert('⚠️ Supabase 라이브러리를 불러올 수 없습니다.\n인터넷 연결을 확인하세요.');
+        return null;
+    }
+    _supabaseClient = supabase.createClient(cfg.url, cfg.key);
+    return _supabaseClient;
+}
+
+function showLoading(msg) {
+    let el = document.getElementById('globalLoading');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'globalLoading';
+        el.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center;';
+        el.innerHTML = '<div style="background:#1a3a6c;color:#fff;padding:24px 40px;border-radius:8px;font-size:15px;text-align:center;"><div style="font-size:30px;margin-bottom:10px;">⏳</div><div id="loadingMsg"></div></div>';
+        document.body.appendChild(el);
+    }
+    document.getElementById('loadingMsg').textContent = msg || '처리중...';
+    el.style.display = 'flex';
+}
+function hideLoading() {
+    const el = document.getElementById('globalLoading');
+    if (el) el.style.display = 'none';
+}
+
+// =========================================
+// 3-2. 보고서 Supabase 저장
+// =========================================
+async function saveToSupabase() {
+    const client = getSupabase();
+    if (!client) return;
+    
+    // 필수 항목 검증
+    const docNo = document.getElementById('docNo').value.trim();
+    if (!docNo) {
+        alert('⚠️ 문서번호를 입력하세요.');
+        document.getElementById('docNo').focus();
+        return;
+    }
+    
+    const action = _currentReportId ? '수정' : '신규 저장';
+    if (!confirm(`작성한 보고서를 Supabase에 ${action}하시겠습니까?`)) return;
+    
+    showLoading(`Supabase에 ${action} 중...`);
+    
+    const payload = {
+        doc_no: docNo,
+        write_date: document.getElementById('writeDate').value || null,
+        dept: document.getElementById('dept').value || null,
+        occur_date: document.getElementById('occurDate').value || null,
+        customer: document.getElementById('customer').value || null,
+        part_no: document.getElementById('partNo').value || null,
+        lot_no: document.getElementById('lotNo').value || null,
+        qty: document.getElementById('qty').value || null,
+        process: document.getElementById('process').value || null,
+        grade: document.getElementById('grade').value || null,
+        writer: document.getElementById('writer').value || null,
+        claim_no: document.getElementById('claimNo').value || null,
+        defect_desc: document.getElementById('defectDesc').value || null,
+        impact: document.getElementById('impact').value || null,
+        before_img: document.getElementById('beforeArea').dataset.image || null,
+        before_desc: document.getElementById('beforeDesc').value || null,
+        cause_occur: document.getElementById('causeOccur').value || null,
+        cause_outflow: document.getElementById('causeOutflow').value || null,
+        cause_4m: document.getElementById('cause4M').value || null,
+        emergency: document.getElementById('emergency').value || null,
+        emergency_date: document.getElementById('emergencyDate').value || null,
+        actions: collectActions(),
+        verify_method: document.getElementById('verifyMethod').value || null,
+        before_ppm: document.getElementById('beforePPM').value || null,
+        after_ppm: document.getElementById('afterPPM').value || null,
+        verify_result: document.getElementById('verifyResult').value || null,
+        standardize: document.getElementById('standardize').value || null,
+        horizontal: document.getElementById('horizontal').value || null,
+        final_status: document.getElementById('finalStatus').value || null,
+        close_date: document.getElementById('closeDate').value || null,
+        qa_verifier: document.getElementById('qaVerifier').value || null,
+        monitor_period: document.getElementById('monitorPeriod').value || null,
+        doc_revision: document.getElementById('docRevision').value || null,
+        similar_check: document.getElementById('similarCheck').value || null,
+        remarks: document.getElementById('remarks').value || null,
+        updated_at: new Date().toISOString()
+    };
+    
+    try {
+        let result;
+        if (_currentReportId) {
+            // UPDATE
+            result = await client
+                .from('special_defect_reports')
+                .update(payload)
+                .eq('id', _currentReportId)
+                .select();
+        } else {
+            // INSERT
+            result = await client
+                .from('special_defect_reports')
+                .insert(payload)
+                .select();
+        }
+        
+        hideLoading();
+        
+        if (result.error) {
+            console.error(result.error);
+            alert('❌ 저장 실패:\n' + result.error.message + '\n\n테이블이 생성되어 있는지 확인하세요.\n(⚙️ 설정 → Supabase SQL → 복사해서 실행)');
+            return;
+        }
+        
+        // 저장된 ID 기억
+        if (result.data && result.data[0]) {
+            _currentReportId = result.data[0].id;
+        }
+        
+        alert(`✅ Supabase에 ${action} 완료\n문서번호: ${docNo}`);
+    } catch(err) {
+        hideLoading();
+        console.error(err);
+        alert('❌ 저장 중 오류:\n' + err.message);
+    }
+}
+
+function collectActions() {
+    const actions = [];
+    document.querySelectorAll('#actionBody tr').forEach(tr => {
+        const cells = tr.querySelectorAll('select, input, textarea');
+        if (cells.length >= 6) {
+            const action = {
+                type: cells[0].value,
+                content: cells[1].value,
+                target: cells[2].value,
+                complete: cells[3].value,
+                person: cells[4].value,
+                status: cells[5].value
+            };
+            // 빈 행은 제외
+            if (action.type || action.content || action.person) {
+                actions.push(action);
+            }
+        }
+    });
+    return actions;
+}
+
+// =========================================
+// 3-3. 이력 조회
+// =========================================
+let _historyData = []; // 캐시
+
+async function openHistory() {
+    document.getElementById('historyModal').classList.add('active');
+    if (_historyData.length === 0) {
+        await loadHistoryList();
+    } else {
+        renderHistoryList();
+    }
+}
+
+function closeHistory() {
+    document.getElementById('historyModal').classList.remove('active');
+}
+
+async function loadHistoryList() {
+    const client = getSupabase();
+    if (!client) return;
+    
+    const wrap = document.getElementById('historyListWrap');
+    wrap.innerHTML = '<div class="loading-spinner">이력을 불러오는 중...</div>';
+    
+    try {
+        const { data, error } = await client
+            .from('special_defect_reports')
+            .select('id, doc_no, write_date, occur_date, customer, part_no, lot_no, dept, process, grade, writer, final_status, updated_at')
+            .order('updated_at', { ascending: false })
+            .limit(200);
+        
+        if (error) {
+            wrap.innerHTML = `<div class="master-empty" style="color:#c0392b;">❌ 조회 실패: ${error.message}<br><br>테이블이 생성되어 있는지 확인하세요.</div>`;
+            return;
+        }
+        
+        _historyData = data || [];
+        renderHistoryList();
+    } catch(err) {
+        wrap.innerHTML = `<div class="master-empty" style="color:#c0392b;">❌ 오류: ${err.message}</div>`;
+    }
+}
+
+function renderHistoryList() {
+    const wrap = document.getElementById('historyListWrap');
+    const search = (document.getElementById('historySearch').value || '').toLowerCase().trim();
+    
+    let list = _historyData;
+    if (search) {
+        list = list.filter(r => 
+            (r.doc_no || '').toLowerCase().includes(search) ||
+            (r.part_no || '').toLowerCase().includes(search) ||
+            (r.customer || '').toLowerCase().includes(search) ||
+            (r.writer || '').toLowerCase().includes(search) ||
+            (r.lot_no || '').toLowerCase().includes(search)
+        );
+    }
+    
+    if (list.length === 0) {
+        wrap.innerHTML = '<div class="master-empty">' + 
+            (search ? `검색 결과 없음: "${search}"` : '저장된 이력이 없습니다.') + 
+            '</div>';
+        return;
+    }
+    
+    const statusClass = (s) => {
+        if (!s) return 'pending';
+        if (s.includes('완료')) return 'complete';
+        if (s.includes('진행') || s.includes('모니터링')) return 'progress';
+        return 'pending';
+    };
+    
+    let html = '<div class="history-list-scroll"><table class="history-table"><thead><tr>' +
+        '<th class="col-doc-no">문서번호</th>' +
+        '<th class="col-customer">고객사</th>' +
+        '<th class="col-part">품번</th>' +
+        '<th class="col-date">발생일</th>' +
+        '<th>LOT</th>' +
+        '<th>작성자</th>' +
+        '<th class="col-status">상태</th>' +
+        '<th class="col-action">관리</th>' +
+        '</tr></thead><tbody>';
+    
+    list.forEach(r => {
+        html += `<tr onclick="loadReport(${r.id})">
+            <td class="col-doc-no"><strong>${r.doc_no || '-'}</strong></td>
+            <td>${r.customer || '-'}</td>
+            <td class="col-part">${r.part_no || '-'}</td>
+            <td>${r.occur_date || r.write_date || '-'}</td>
+            <td>${r.lot_no || '-'}</td>
+            <td>${r.writer || '-'}</td>
+            <td><span class="status-badge ${statusClass(r.final_status)}">${r.final_status || '미설정'}</span></td>
+            <td><button class="history-row-btn" onclick="event.stopPropagation(); deleteReport(${r.id}, '${(r.doc_no||'').replace(/'/g,"\\'")}')">삭제</button></td>
+        </tr>`;
+    });
+    
+    html += '</tbody></table></div>';
+    html += `<div style="margin-top:10px; font-size:12px; color:#666; text-align:right;">총 ${list.length}건 / 전체 ${_historyData.length}건</div>`;
+    wrap.innerHTML = html;
+}
+
+// =========================================
+// 3-4. 보고서 불러오기
+// =========================================
+async function loadReport(id) {
+    const client = getSupabase();
+    if (!client) return;
+    
+    if (!confirm('이 보고서를 작성 화면에 불러오시겠습니까?\n(현재 작성 중인 내용은 사라집니다)')) return;
+    
+    showLoading('보고서를 불러오는 중...');
+    
+    try {
+        const { data, error } = await client
+            .from('special_defect_reports')
+            .select('*')
+            .eq('id', id)
+            .single();
+        
+        hideLoading();
+        
+        if (error) {
+            alert('❌ 불러오기 실패:\n' + error.message);
+            return;
+        }
+        
+        applyReportData(data);
+        _currentReportId = id;
+        closeHistory();
+        
+        // 화면 상단으로 스크롤
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // 작은 안내 배너 표시
+        showEditBanner(data.doc_no);
+    } catch(err) {
+        hideLoading();
+        alert('❌ 오류: ' + err.message);
+    }
+}
+
+function showEditBanner(docNo) {
+    let banner = document.getElementById('editBanner');
+    if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'editBanner';
+        banner.style.cssText = 'position:fixed; top:0; left:0; right:0; background:#16a085; color:#fff; padding:10px 20px; text-align:center; z-index:998; font-size:13px; font-weight:600; box-shadow:0 2px 6px rgba(0,0,0,0.2);';
+        document.body.appendChild(banner);
+    }
+    banner.innerHTML = `📝 편집 모드: 문서번호 <strong>${docNo}</strong> 수정 중 &nbsp;|&nbsp; 
+        <a href="#" onclick="newReport(); return false;" style="color:#fff; text-decoration:underline;">새 보고서 작성</a>`;
+    banner.style.display = 'block';
+}
+
+function newReport() {
+    if (!confirm('새 보고서를 작성하시겠습니까?\n(현재 화면 내용은 사라집니다)')) return;
+    location.reload();
+}
+
+function applyReportData(data) {
+    // 마스터 새로고침
+    refreshAllSelects();
+    
+    const fieldMap = {
+        doc_no: 'docNo', write_date: 'writeDate', dept: 'dept',
+        occur_date: 'occurDate', customer: 'customer', part_no: 'partNo',
+        lot_no: 'lotNo', qty: 'qty', process: 'process', grade: 'grade',
+        writer: 'writer', claim_no: 'claimNo', defect_desc: 'defectDesc',
+        impact: 'impact', before_desc: 'beforeDesc',
+        cause_occur: 'causeOccur', cause_outflow: 'causeOutflow', cause_4m: 'cause4M',
+        emergency: 'emergency', emergency_date: 'emergencyDate',
+        verify_method: 'verifyMethod', before_ppm: 'beforePPM',
+        after_ppm: 'afterPPM', verify_result: 'verifyResult',
+        standardize: 'standardize', horizontal: 'horizontal',
+        final_status: 'finalStatus', close_date: 'closeDate',
+        qa_verifier: 'qaVerifier', monitor_period: 'monitorPeriod',
+        doc_revision: 'docRevision', similar_check: 'similarCheck',
+        remarks: 'remarks'
+    };
+    
+    Object.keys(fieldMap).forEach(dbKey => {
+        const elId = fieldMap[dbKey];
+        const el = document.getElementById(elId);
+        if (!el) return;
+        const value = data[dbKey] || '';
+        
+        // select에 없는 값이면 임시 옵션 추가
+        if (el.tagName === 'SELECT' && value) {
+            const exists = Array.from(el.options).some(o => o.value === value);
+            if (!exists) {
+                const opt = document.createElement('option');
+                opt.value = value;
+                opt.textContent = value + ' (마스터에 없음)';
+                el.appendChild(opt);
+            }
+        }
+        el.value = value;
+    });
+    
+    // 사진 복원
+    if (data.before_img) {
+        const area = document.getElementById('beforeArea');
+        area.innerHTML = `<img src="${data.before_img}" alt="사진">`;
+        area.dataset.image = data.before_img;
+    } else {
+        clearPhoto('beforeArea','beforeInfo','beforeFile', '📷', '클릭하여 사진 업로드');
+    }
+    
+    // 개선활동 테이블 복원
+    document.getElementById('actionBody').innerHTML = '';
+    actionRowCount = 0;
+    if (data.actions && Array.isArray(data.actions) && data.actions.length > 0) {
+        data.actions.forEach(a => addActionRow(a));
+    } else {
+        for (let i = 0; i < 3; i++) addActionRow();
+    }
+}
+
+// =========================================
+// 3-5. 보고서 삭제
+// =========================================
+async function deleteReport(id, docNo) {
+    if (!confirm(`정말 삭제하시겠습니까?\n문서번호: ${docNo}\n\n※ 이 작업은 되돌릴 수 없습니다.`)) return;
+    
+    const client = getSupabase();
+    if (!client) return;
+    
+    showLoading('삭제 중...');
+    
+    try {
+        const { error } = await client
+            .from('special_defect_reports')
+            .delete()
+            .eq('id', id);
+        
+        hideLoading();
+        
+        if (error) {
+            alert('❌ 삭제 실패:\n' + error.message);
+            return;
+        }
+        
+        // 캐시에서 제거
+        _historyData = _historyData.filter(r => r.id !== id);
+        renderHistoryList();
+        
+        // 편집 중이던 보고서를 삭제했다면 새 보고서 모드로
+        if (_currentReportId === id) {
+            _currentReportId = null;
+            const banner = document.getElementById('editBanner');
+            if (banner) banner.style.display = 'none';
+        }
+        
+        alert('✅ 삭제 완료');
+    } catch(err) {
+        hideLoading();
+        alert('❌ 오류: ' + err.message);
+    }
+}
+
 // 작성용 데이터 수집 (PDF/HTML 저장 시 활용)
 function collectData() {
     const data = {};
@@ -2048,6 +2684,14 @@ document.getElementById('writeDate').value = new Date().toISOString().slice(0,10
 
 // Supabase 설정 초기 로드
 loadSupabaseConfig();
+
+// 보고서 모든 입력 필드 자동완성 차단 (URL/이메일 등이 자동 입력되는 것 방지)
+document.querySelectorAll('#report input, #report textarea').forEach(el => {
+    el.setAttribute('autocomplete', 'off');
+    el.setAttribute('autocorrect', 'off');
+    el.setAttribute('autocapitalize', 'off');
+    el.setAttribute('spellcheck', 'false');
+});
 
 // =========================================
 // 5. 인쇄/PDF 출력 시 textarea 내용 전체 표시
