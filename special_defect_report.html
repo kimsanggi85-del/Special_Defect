@@ -1,0 +1,2722 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>특별불량 개선활동 보고서</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+html {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+input, textarea, select, button {
+    font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+    font-size: 13px;
+    -webkit-appearance: none;
+    appearance: none;
+    color: #333;
+}
+select {
+    -webkit-appearance: menulist;
+    appearance: menulist;
+}
+body {
+    font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+    background: #f0f2f5;
+    padding: 20px;
+    color: #333;
+    line-height: 1.5;
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 30px 40px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    border-radius: 4px;
+}
+.header {
+    text-align: center;
+    border-bottom: 3px double #1a3a6c;
+    padding-bottom: 18px;
+    margin-bottom: 25px;
+}
+.header h1 {
+    font-size: 26px;
+    color: #1a3a6c;
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+}
+.header .subtitle {
+    font-size: 12px;
+    color: #666;
+}
+.approval-box {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+.approval-table {
+    border-collapse: collapse;
+    font-size: 11px;
+}
+.approval-table th, .approval-table td {
+    border: 1px solid #555;
+    padding: 0;
+    text-align: center;
+    width: 70px;
+    height: 60px;
+}
+.approval-table th {
+    background: #e8eef5;
+    height: 22px;
+    font-weight: 600;
+}
+.approval-label {
+    background: #1a3a6c;
+    color: #fff;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    padding: 10px 6px;
+    font-size: 12px;
+    letter-spacing: 4px;
+    font-weight: 600;
+}
+.section {
+    margin-bottom: 22px;
+}
+.section-title {
+    background: #1a3a6c;
+    color: #fff;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    border-left: 5px solid #ffc107;
+    margin-bottom: 0;
+}
+table.info-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+table.info-table th, table.info-table td {
+    border: 1px solid #c0c0c0;
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: middle;
+}
+table.info-table th {
+    background: #f5f7fa;
+    font-weight: 600;
+    color: #1a3a6c;
+    width: 130px;
+    text-align: center;
+}
+table.info-table input, table.info-table textarea, table.info-table select {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 13px;
+    padding: 2px 4px;
+    color: #333;
+}
+table.info-table input:focus, table.info-table textarea:focus, table.info-table select:focus {
+    outline: 1px solid #1a3a6c;
+    background: #fffbe6;
+}
+textarea {
+    resize: vertical;
+    min-height: 60px;
+    line-height: 1.6;
+}
+.photo-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    border: 1px solid #c0c0c0;
+    padding: 18px;
+    background: #fafbfc;
+}
+.photo-section-single {
+    border: 1px solid #c0c0c0;
+    padding: 20px;
+    background: #fafbfc;
+}
+.photo-section-single .photo-box {
+    max-width: 700px;
+    margin: 0 auto;
+}
+.photo-area-large {
+    min-height: 380px !important;
+}
+.photo-area-large img {
+    max-height: 450px !important;
+}
+.photo-box {
+    text-align: center;
+}
+.photo-label {
+    background: #34495e;
+    color: #fff;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+.photo-label.before { background: #c0392b; }
+.photo-label.after { background: #27ae60; }
+.photo-area {
+    width: 100%;
+    min-height: 240px;
+    border: 2px dashed #bbb;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    cursor: pointer;
+    transition: all 0.2s;
+    overflow: hidden;
+    position: relative;
+}
+.photo-area:hover {
+    border-color: #1a3a6c;
+    background: #f0f4fa;
+}
+.photo-area img {
+    max-width: 100%;
+    max-height: 280px;
+    display: block;
+}
+.photo-area .placeholder {
+    color: #999;
+    font-size: 13px;
+    padding: 20px;
+}
+.photo-area .placeholder span {
+    font-size: 36px;
+    display: block;
+    margin-bottom: 8px;
+    color: #ccc;
+}
+.photo-info {
+    font-size: 11px;
+    color: #666;
+    margin-top: 6px;
+    min-height: 16px;
+}
+.photo-info .size-ok { color: #27ae60; font-weight: 600; }
+.photo-info .size-warn { color: #e67e22; }
+.photo-controls {
+    margin-top: 8px;
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+}
+.btn {
+    background: #1a3a6c;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    font-size: 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: inherit;
+}
+.btn:hover { background: #2c5599; }
+.btn.btn-danger { background: #c0392b; }
+.btn.btn-danger:hover { background: #d44637; }
+.btn.btn-success {
+    background: #27ae60;
+    padding: 10px 30px;
+    font-size: 14px;
+    font-weight: 600;
+}
+.btn.btn-success:hover { background: #2ecc71; }
+.btn.btn-secondary { background: #7f8c8d; }
+.btn.btn-secondary:hover { background: #95a5a6; }
+.btn.btn-pdf {
+    background: #c0392b;
+}
+.btn.btn-pdf:hover { background: #d44637; }
+.btn.btn-db {
+    background: #16a085;
+}
+.btn.btn-db:hover { background: #1abc9c; }
+.btn.btn-history {
+    background: #8e44ad;
+}
+.btn.btn-history:hover { background: #9b59b6; }
+
+/* DB 드롭다운 */
+.db-dropdown {
+    position: relative;
+    display: inline-block;
+}
+.db-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    background: #fff;
+    border: 1px solid #d6dde6;
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    min-width: 240px;
+    z-index: 500;
+    overflow: hidden;
+}
+.db-menu.active { display: block; }
+.db-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    background: #fff;
+    border: none;
+    padding: 12px 14px;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    color: #333;
+    border-bottom: 1px solid #f0f3f7;
+    transition: background 0.15s;
+}
+.db-menu-item:last-child { border-bottom: none; }
+.db-menu-item:hover { background: #f0f7f5; }
+.db-menu-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+}
+.db-menu-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a3a6c;
+}
+.db-menu-desc {
+    font-size: 11px;
+    color: #888;
+    margin-top: 2px;
+}
+.cause-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid #c0c0c0;
+}
+.cause-box {
+    padding: 12px;
+    border-right: 1px solid #c0c0c0;
+}
+.cause-box:last-child { border-right: none; }
+.cause-box h4 {
+    color: #1a3a6c;
+    font-size: 13px;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #ffc107;
+}
+.cause-box textarea {
+    width: 100%;
+    border: 1px solid #ddd;
+    padding: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    min-height: 100px;
+    background: #fff;
+}
+.action-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+.action-table th, .action-table td {
+    border: 1px solid #c0c0c0;
+    padding: 8px 6px;
+    text-align: center;
+    vertical-align: middle;
+}
+.action-table th {
+    background: #1a3a6c;
+    color: #fff;
+    font-weight: 600;
+    padding: 10px 6px;
+}
+.action-table td input, .action-table td textarea, .action-table td select {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 13px;
+    text-align: left;
+    padding: 2px 4px;
+}
+.action-table td input:focus, .action-table td textarea:focus, .action-table td select:focus {
+    outline: 1px solid #1a3a6c;
+    background: #fffbe6;
+}
+.action-table td textarea {
+    min-height: 40px;
+    resize: vertical;
+}
+.action-table td.no-col { width: 40px; background: #f5f7fa; font-weight: 600; }
+.action-table td.date-col { width: 110px; }
+.action-table td.person-col { width: 100px; }
+.action-table td.status-col { width: 90px; }
+.action-table td.action-col { width: 60px; }
+.del-btn {
+    background: #c0392b;
+    color: #fff;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 11px;
+}
+.status-select {
+    text-align: center !important;
+}
+.btn-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    background: #f5f7fa;
+    border: 1px solid #d6dde6;
+    border-radius: 4px;
+}
+.toolbar-left, .toolbar-right {
+    display: flex;
+    gap: 8px;
+}
+input[type="file"] { display: none; }
+
+/* ============================
+   PDF 다운로드용 임시 스타일
+   ============================ */
+.pdf-mode .toolbar,
+.pdf-mode .photo-controls,
+.pdf-mode .btn-row,
+.pdf-mode .modal-overlay,
+.pdf-mode .del-btn,
+.pdf-mode .action-col,
+.pdf-mode input[type="file"],
+.pdf-mode .photo-info {
+    display: none !important;
+}
+.pdf-mode {
+    background: #fff !important;
+    padding: 0 !important;
+}
+.pdf-mode .container {
+    box-shadow: none !important;
+    padding: 10mm !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+.pdf-mode .header h1 { font-size: 22px !important; }
+.pdf-mode .section-title { font-size: 13px !important; padding: 6px 12px !important; }
+.pdf-mode .section { page-break-inside: avoid; margin-bottom: 12px !important; }
+.pdf-mode input,
+.pdf-mode select,
+.pdf-mode textarea {
+    border: none !important;
+    background: transparent !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    color: #000 !important;
+}
+/* PDF 모드에서는 모든 테이블을 PC 가로 형태로 강제 */
+.pdf-mode table.info-table,
+.pdf-mode table.info-table tbody,
+.pdf-mode table.info-table tr,
+.pdf-mode table.info-table th,
+.pdf-mode table.info-table td {
+    display: revert !important;
+    width: auto !important;
+}
+.pdf-mode table.info-table { width: 100% !important; border-collapse: collapse; }
+.pdf-mode table.info-table th {
+    background: #f5f7fa !important;
+    color: #1a3a6c !important;
+    width: 110px !important;
+    text-align: center !important;
+    border: 1px solid #999 !important;
+    padding: 6px 8px !important;
+    font-size: 11px !important;
+}
+.pdf-mode table.info-table td {
+    border: 1px solid #999 !important;
+    padding: 6px 8px !important;
+    font-size: 11px !important;
+}
+.pdf-mode .cause-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+}
+.pdf-mode .cause-box {
+    border-right: 1px solid #999 !important;
+    border-bottom: none !important;
+}
+.pdf-mode .cause-box:last-child { border-right: none !important; }
+.pdf-mode .action-table thead { display: table-header-group !important; }
+.pdf-mode .action-table,
+.pdf-mode .action-table tbody,
+.pdf-mode .action-table tr {
+    display: revert !important;
+}
+.pdf-mode .action-table tr {
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+.pdf-mode .action-table th,
+.pdf-mode .action-table td {
+    display: table-cell !important;
+    border: 1px solid #999 !important;
+    padding: 5px 6px !important;
+    font-size: 10.5px !important;
+    text-align: left !important;
+    background: transparent !important;
+    color: #000 !important;
+}
+.pdf-mode .action-table th {
+    background: #1a3a6c !important;
+    color: #fff !important;
+    text-align: center !important;
+}
+.pdf-mode .action-table td::before { content: none !important; }
+.pdf-mode .action-table td.no-col {
+    background: #f5f7fa !important;
+    color: #000 !important;
+    text-align: center !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+}
+.pdf-mode .photo-section-single { padding: 8px !important; background: transparent !important; }
+.pdf-mode .photo-area {
+    border: 1px solid #666 !important;
+    min-height: 0 !important;
+}
+.pdf-mode .photo-area-large { min-height: 0 !important; max-height: 280px !important; }
+.pdf-mode .photo-area img { max-height: 260px !important; }
+.pdf-mode .photo-area .placeholder { display: none !important; }
+/* textarea 자동 높이 (PDF 생성 시 JS로 함께 조정) */
+.pdf-mode textarea {
+    overflow: visible !important;
+    white-space: pre-wrap !important;
+    resize: none !important;
+}
+
+/* ============================
+   설정 모달
+   ============================ */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px 15px;
+    overflow-y: auto;
+}
+.modal-overlay.active { display: flex; }
+.modal-box {
+    background: #fff;
+    border-radius: 6px;
+    max-width: 700px;
+    width: 100%;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+.modal-header {
+    background: #1a3a6c;
+    color: #fff;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-header h2 {
+    font-size: 16px;
+    font-weight: 600;
+}
+.modal-close {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    line-height: 1;
+}
+.modal-tabs {
+    display: flex;
+    background: #f5f7fa;
+    border-bottom: 1px solid #d6dde6;
+}
+.modal-tab {
+    flex: 1;
+    padding: 12px 8px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    border-bottom: 3px solid transparent;
+    font-family: inherit;
+}
+.modal-tab.active {
+    color: #1a3a6c;
+    border-bottom-color: #ffc107;
+    background: #fff;
+}
+.modal-body {
+    padding: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+.master-list {
+    border: 1px solid #d6dde6;
+    border-radius: 4px;
+    background: #fafbfc;
+    margin-bottom: 12px;
+}
+.master-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid #e8eef5;
+    background: #fff;
+}
+.master-item:last-child { border-bottom: none; }
+.master-item input.master-edit {
+    flex: 1;
+    border: 1px solid #ddd;
+    padding: 6px 8px;
+    font-size: 13px;
+    background: #fff;
+    border-radius: 3px;
+    margin-right: 8px;
+}
+.master-item .master-del {
+    background: #c0392b;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+}
+.master-item .master-del:hover { background: #d44637; }
+.master-add-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+.master-add-row input {
+    flex: 1;
+    border: 1px solid #ddd;
+    padding: 8px 10px;
+    font-size: 13px;
+    border-radius: 3px;
+    background: #fff;
+}
+.master-add-row button {
+    background: #27ae60;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+}
+.master-add-row button:hover { background: #2ecc71; }
+.modal-footer {
+    padding: 12px 20px;
+    background: #f5f7fa;
+    border-top: 1px solid #d6dde6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-footer .info-text {
+    font-size: 12px;
+    color: #666;
+}
+.master-empty {
+    padding: 20px;
+    text-align: center;
+    color: #999;
+    font-size: 13px;
+}
+
+/* Supabase 설정 카드 */
+.supabase-card {
+    background: linear-gradient(135deg, #1e2a3a 0%, #2c3e50 100%);
+    color: #fff;
+    border-radius: 6px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+}
+.supabase-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ff9966;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.supabase-field {
+    margin-bottom: 10px;
+}
+.supabase-field label {
+    display: block;
+    font-size: 12px;
+    color: #b8c5d6;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+.supabase-field input {
+    width: 100%;
+    background: #2a3a4f;
+    border: 1px solid #3a4a5f;
+    color: #fff;
+    padding: 9px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: 'Consolas', 'Malgun Gothic', monospace;
+}
+.supabase-field input:focus {
+    outline: none;
+    border-color: #ff9966;
+    background: #2f4156;
+}
+.supabase-field input::placeholder {
+    color: #5a6a80;
+}
+.sql-toggle {
+    background: rgba(255,153,102,0.1);
+    border: 1px solid rgba(255,153,102,0.3);
+    border-radius: 4px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+.sql-toggle-header {
+    padding: 10px 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #ff9966;
+    font-size: 13px;
+    font-weight: 600;
+    user-select: none;
+}
+.sql-toggle-header:hover { background: rgba(255,153,102,0.15); }
+.sql-toggle-arrow {
+    transition: transform 0.2s;
+    font-size: 10px;
+}
+.sql-toggle.open .sql-toggle-arrow { transform: rotate(90deg); }
+.sql-toggle-body {
+    display: none;
+    padding: 12px 14px;
+    background: #1a2535;
+    border-top: 1px solid rgba(255,153,102,0.2);
+}
+.sql-toggle.open .sql-toggle-body { display: block; }
+.sql-code {
+    background: #0d1520;
+    color: #a8d4ff;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 11px;
+    padding: 10px;
+    border-radius: 3px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 200px;
+    overflow-y: auto;
+    line-height: 1.5;
+}
+.btn-copy-sql {
+    background: #ff9966;
+    color: #1a2535;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 8px;
+}
+.btn-copy-sql:hover { background: #ffb088; }
+.btn-save-all {
+    width: 100%;
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    color: #fff;
+    border: none;
+    padding: 14px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 6px;
+    box-shadow: 0 2px 6px rgba(243,156,18,0.3);
+}
+.btn-save-all:hover { background: linear-gradient(135deg, #e67e22 0%, #d35400 100%); }
+.connection-status {
+    background: #2c3e50;
+    color: #fff;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    font-size: 13px;
+}
+.status-title {
+    color: #5dade2;
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.status-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 12px;
+}
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.status-dot.connected { background: #27ae60; box-shadow: 0 0 6px #27ae60; }
+.status-dot.disconnected { background: #95a5a6; }
+.status-dot.error { background: #e74c3c; }
+.section-divider {
+    height: 1px;
+    background: #d6dde6;
+    margin: 16px 0;
+}
+.master-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a3a6c;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #1a3a6c;
+}
+
+/* 이력 조회 */
+.history-filter {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.history-filter input {
+    flex: 1;
+    border: 1px solid #d6dde6;
+    padding: 9px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    background: #fff;
+}
+.history-filter input:focus {
+    outline: none;
+    border-color: #1a3a6c;
+}
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+.history-table th {
+    background: #1a3a6c;
+    color: #fff;
+    padding: 8px 6px;
+    text-align: center;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+}
+.history-table td {
+    padding: 8px 6px;
+    border-bottom: 1px solid #e8eef5;
+    text-align: center;
+}
+.history-table tbody tr {
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.history-table tbody tr:hover {
+    background: #fffbe6;
+}
+.history-table .col-doc-no { width: 130px; text-align: left; }
+.history-table .col-customer { width: 100px; }
+.history-table .col-part { width: 130px; text-align: left; }
+.history-table .col-date { width: 100px; }
+.history-table .col-status { width: 100px; }
+.history-table .col-action { width: 70px; }
+.history-row-btn {
+    background: #c0392b;
+    color: #fff;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 11px;
+}
+.history-row-btn:hover { background: #d44637; }
+.status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+}
+.status-badge.complete { background: #d4edda; color: #155724; }
+.status-badge.progress { background: #fff3cd; color: #856404; }
+.status-badge.pending { background: #f8d7da; color: #721c24; }
+.history-list-scroll {
+    max-height: 50vh;
+    overflow-y: auto;
+    border: 1px solid #d6dde6;
+    border-radius: 4px;
+}
+.loading-spinner {
+    text-align: center;
+    padding: 40px 20px;
+    color: #1a3a6c;
+}
+.loading-spinner::before {
+    content: "⏳";
+    font-size: 30px;
+    display: block;
+    margin-bottom: 10px;
+    animation: spin 1.5s linear infinite;
+}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* ============================
+   모바일 세로 화면 대응
+   ============================ */
+@media screen and (max-width: 768px) {
+    body {
+        padding: 8px;
+    }
+    .container {
+        padding: 15px 12px;
+    }
+    .header h1 {
+        font-size: 18px;
+        letter-spacing: 2px;
+    }
+    .header .subtitle {
+        font-size: 11px;
+    }
+    .section-title {
+        font-size: 13px;
+        padding: 8px 10px;
+    }
+    .toolbar {
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px;
+    }
+    .toolbar-left, .toolbar-right {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .toolbar-right .btn {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    /* 결재란 - 모바일에서 작게 */
+    .approval-table th, .approval-table td {
+        width: 50px;
+        height: 45px;
+        font-size: 10px;
+    }
+    .approval-label {
+        padding: 6px 4px;
+        font-size: 10px;
+    }
+    /* 정보 테이블 - 세로 배치 전환 */
+    table.info-table, table.info-table tbody, 
+    table.info-table tr, table.info-table th, table.info-table td {
+        display: block;
+        width: 100% !important;
+    }
+    table.info-table tr {
+        border-bottom: 2px solid #d6dde6;
+        margin-bottom: 8px;
+    }
+    table.info-table th {
+        background: #1a3a6c;
+        color: #fff;
+        text-align: left;
+        padding: 6px 10px;
+        font-size: 12px;
+        border: none;
+    }
+    table.info-table td {
+        padding: 8px 10px;
+        border: 1px solid #c0c0c0;
+        border-top: none;
+        min-height: 40px;
+    }
+    table.info-table input,
+    table.info-table textarea,
+    table.info-table select {
+        font-size: 13px;
+        padding: 4px;
+        min-height: 32px;
+    }
+    /* 사진 영역 - 모바일 대응 */
+    .photo-section-single {
+        padding: 12px;
+    }
+    .photo-section-single .photo-box {
+        max-width: 100%;
+    }
+    .photo-area-large {
+        min-height: 280px !important;
+    }
+    .photo-area-large img {
+        max-height: 320px !important;
+    }
+    .photo-label {
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+    /* 원인분석 그리드 - 세로 배치 */
+    .cause-grid {
+        grid-template-columns: 1fr;
+    }
+    .cause-box {
+        border-right: none;
+        border-bottom: 1px solid #c0c0c0;
+    }
+    .cause-box:last-child {
+        border-bottom: none;
+    }
+    .cause-box textarea {
+        min-height: 140px;
+    }
+    /* 개선활동 테이블 - 카드형 배치 */
+    .action-table thead {
+        display: none;
+    }
+    .action-table, .action-table tbody, .action-table tr {
+        display: block;
+        width: 100%;
+    }
+    .action-table tr {
+        margin-bottom: 12px;
+        border: 2px solid #1a3a6c;
+        border-radius: 4px;
+        padding: 8px;
+        background: #fafbfc;
+    }
+    .action-table td {
+        display: block;
+        width: 100% !important;
+        border: none;
+        border-bottom: 1px dashed #ccc;
+        padding: 6px 4px;
+        text-align: left;
+        min-height: 0;
+    }
+    .action-table td:last-child {
+        border-bottom: none;
+    }
+    .action-table td::before {
+        content: attr(data-label);
+        display: block;
+        font-weight: 600;
+        color: #1a3a6c;
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+    .action-table td.no-col {
+        background: #1a3a6c;
+        color: #fff;
+        font-size: 13px;
+        text-align: center;
+        margin-bottom: 6px;
+        padding: 6px;
+        border-radius: 3px;
+    }
+    .action-table td.no-col::before { content: ""; }
+    .action-table td input,
+    .action-table td textarea,
+    .action-table td select {
+        font-size: 13px;
+        padding: 6px;
+        border: 1px solid #ddd;
+        background: #fff;
+        min-height: 34px;
+    }
+    .action-table td textarea {
+        min-height: 60px;
+    }
+    .del-btn {
+        padding: 8px 16px;
+        font-size: 12px;
+    }
+    .btn-row {
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+    }
+    .btn-row .btn {
+        padding: 10px;
+        font-size: 13px;
+    }
+}
+
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 10mm 12mm;
+    }
+    html, body {
+        background: #fff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+    body { font-size: 11px; }
+    .container {
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+        border-radius: 0 !important;
+    }
+    /* 인쇄 시 숨길 요소 */
+    .toolbar, .photo-controls, .btn-row, .modal-overlay, 
+    input[type="file"], .del-btn, .action-col, 
+    button.btn, .photo-info {
+        display: none !important;
+    }
+    /* 헤더 */
+    .header h1 { font-size: 20px; }
+    .header .subtitle { font-size: 10px; }
+    .header { padding-bottom: 10px; margin-bottom: 12px; }
+    /* 섹션 */
+    .section { 
+        page-break-inside: avoid; 
+        margin-bottom: 10px;
+    }
+    .section-title {
+        font-size: 12px;
+        padding: 5px 10px;
+        background: #1a3a6c !important;
+        color: #fff !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    /* 결재란 */
+    .approval-table th, .approval-table td {
+        width: 55px;
+        height: 45px;
+        font-size: 10px;
+    }
+    .approval-label {
+        background: #1a3a6c !important;
+        color: #fff !important;
+    }
+    /* 테이블 - PC 형태로 강제 (모바일 스타일 무효화) */
+    table.info-table, table.info-table tbody,
+    table.info-table tr, table.info-table th, table.info-table td {
+        display: revert !important;
+        width: auto !important;
+    }
+    table.info-table { 
+        width: 100% !important; 
+        font-size: 10.5px;
+        border-collapse: collapse;
+    }
+    table.info-table th {
+        background: #f5f7fa !important;
+        color: #1a3a6c !important;
+        width: 110px !important;
+        text-align: center !important;
+        padding: 5px 8px !important;
+        border: 1px solid #999 !important;
+    }
+    table.info-table td {
+        padding: 5px 8px !important;
+        border: 1px solid #999 !important;
+    }
+    /* input/textarea/select - 인쇄용으로 평문화 */
+    table.info-table input,
+    table.info-table textarea,
+    table.info-table select,
+    .action-table input,
+    .action-table textarea,
+    .action-table select,
+    .cause-box textarea {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        font-size: 10.5px !important;
+        color: #000 !important;
+        -webkit-appearance: none !important;
+        appearance: none !important;
+        resize: none !important;
+        min-height: 0 !important;
+    }
+    textarea {
+        overflow: visible !important;
+        white-space: pre-wrap !important;
+        word-wrap: break-word !important;
+    }
+    /* 사진 영역 */
+    .photo-section-single {
+        padding: 6px;
+        background: transparent !important;
+    }
+    .photo-area {
+        border: 1px solid #666 !important;
+        min-height: 0 !important;
+    }
+    .photo-area-large {
+        min-height: 0 !important;
+        max-height: 280px !important;
+    }
+    .photo-area img {
+        max-height: 260px !important;
+    }
+    .photo-area .placeholder { display: none; }
+    .photo-label {
+        font-size: 11px !important;
+        padding: 4px 8px !important;
+    }
+    .photo-label.before { background: #c0392b !important; color:#fff !important; }
+    .photo-label.after { background: #27ae60 !important; color:#fff !important; }
+    /* 원인분석 그리드 - PC 가로 배치 강제 */
+    .cause-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+    }
+    .cause-box {
+        border-right: 1px solid #999 !important;
+        border-bottom: none !important;
+        padding: 8px !important;
+    }
+    .cause-box:last-child { border-right: none !important; }
+    .cause-box h4 {
+        font-size: 11px;
+        margin-bottom: 4px;
+        padding-bottom: 3px;
+    }
+    .cause-box textarea {
+        min-height: 0 !important;
+    }
+    /* 개선활동 테이블 - PC 표 형태 강제 */
+    .action-table thead { display: table-header-group !important; }
+    .action-table, .action-table tbody, .action-table tr {
+        display: revert !important;
+    }
+    .action-table tr {
+        border: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+    }
+    .action-table th, .action-table td {
+        display: table-cell !important;
+        border: 1px solid #999 !important;
+        padding: 4px 5px !important;
+        font-size: 10px !important;
+        text-align: left !important;
+        background: transparent !important;
+        color: #000 !important;
+        min-height: 0 !important;
+    }
+    .action-table th {
+        background: #1a3a6c !important;
+        color: #fff !important;
+        text-align: center !important;
+        font-weight: 600;
+    }
+    .action-table td::before { content: none !important; }
+    .action-table td.no-col {
+        background: #f5f7fa !important;
+        color: #000 !important;
+        text-align: center !important;
+        font-weight: 600;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        padding: 4px !important;
+    }
+    /* 컬러 강제 */
+    .photo-label.before, .photo-label.after,
+    .section-title, .approval-label,
+    .action-table th, table.info-table th {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+    <div class="toolbar-left">
+        <strong style="color:#1a3a6c; font-size:14px;">📋 특별불량 개선활동 보고서</strong>
+    </div>
+    <div class="toolbar-right">
+        <div class="db-dropdown">
+            <button class="btn btn-db" onclick="toggleDBMenu(event)">☁️ DB ▾</button>
+            <div class="db-menu" id="dbMenu">
+                <button class="db-menu-item" onclick="saveToSupabase(); closeDBMenu();">
+                    <span class="db-menu-icon">💾</span>
+                    <div>
+                        <div class="db-menu-title">현재 보고서 저장</div>
+                        <div class="db-menu-desc">Supabase에 저장 / 수정</div>
+                    </div>
+                </button>
+                <button class="db-menu-item" onclick="openHistory(); closeDBMenu();">
+                    <span class="db-menu-icon">📋</span>
+                    <div>
+                        <div class="db-menu-title">이력 조회</div>
+                        <div class="db-menu-desc">저장된 보고서 목록</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+        <button class="btn btn-success" onclick="exportHTML()">📥 파일 저장</button>
+        <button class="btn" onclick="window.print()">🖨️ 인쇄</button>
+        <button class="btn btn-pdf" onclick="exportPDF()">📕 PDF 저장</button>
+        <button class="btn btn-secondary" onclick="openSettings()">⚙️ 설정</button>
+    </div>
+</div>
+
+<div class="container" id="report">
+
+    <!-- 헤더 -->
+    <div class="header">
+        <h1>특 별 불 량 개 선 활 동 보 고 서</h1>
+        <div class="subtitle">Special Defect Corrective Action Report</div>
+    </div>
+
+    <!-- 결재란 -->
+    <div class="approval-box">
+        <table class="approval-table">
+            <tr>
+                <td class="approval-label" rowspan="2">결재</td>
+                <th>담당</th><th>검토</th><th>승인</th>
+            </tr>
+            <tr><td></td><td></td><td></td></tr>
+        </table>
+    </div>
+
+    <!-- 1. 기본 정보 -->
+    <div class="section">
+        <div class="section-title">1. 기 본 정 보</div>
+        <table class="info-table">
+            <tr>
+                <th>문서번호</th>
+                <td><input type="text" id="docNo" placeholder="예: QM-SCA-2026-001"></td>
+                <th>작성일자</th>
+                <td><input type="date" id="writeDate"></td>
+            </tr>
+            <tr>
+                <th>발생부서</th>
+                <td>
+                    <select id="dept"></select>
+                </td>
+                <th>발생일자</th>
+                <td><input type="date" id="occurDate"></td>
+            </tr>
+            <tr>
+                <th>고객사</th>
+                <td>
+                    <select id="customer"></select>
+                </td>
+                <th>품 번</th>
+                <td>
+                    <select id="partNo"></select>
+                </td>
+            </tr>
+            <tr>
+                <th>불량 LOT NO</th>
+                <td><input type="text" id="lotNo" placeholder="예: 240515-001"></td>
+                <th>발생수량 / 점검수량</th>
+                <td><input type="text" id="qty" placeholder="예: 12 / 5,000 (PPM: 2,400)"></td>
+            </tr>
+            <tr>
+                <th>발생공정</th>
+                <td>
+                    <select id="process"></select>
+                </td>
+                <th>불량 등급</th>
+                <td>
+                    <select id="grade">
+                        <option value="">-- 선택 --</option>
+                        <option>특별불량 (Critical)</option>
+                        <option>중불량 (Major)</option>
+                        <option>경불량 (Minor)</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>작성자</th>
+                <td><input type="text" id="writer" placeholder="소속 / 성명"></td>
+                <th>사내 관리번호</th>
+                <td><input type="text" id="claimNo" placeholder="예: 부적합보고서 No."></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- 2. 불량 내용 -->
+    <div class="section">
+        <div class="section-title">2. 불 량 내 용 (D2: Problem Description)</div>
+        <table class="info-table">
+            <tr>
+                <th>불량 현상</th>
+                <td colspan="3"><textarea id="defectDesc" placeholder="예: 내철 외경부에 0.3mm 깊이의 압흔 발생. 24시간 야간조 작업분 중 LOT 240515-001에서 12개 검출됨. (5W1H 형식으로 기술)"></textarea></td>
+            </tr>
+            <tr>
+                <th>영향도 / 손실</th>
+                <td colspan="3"><textarea id="impact" placeholder="예: 사내 전수선별 5,000개 진행 / 라인 정지 2시간 / 폐기 12개 / 손실금액 약 ___원"></textarea></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- 3. 불량 사진 -->
+    <div class="section">
+        <div class="section-title">3. 불 량 사 진 — 자동 30KB 이하로 압축됨</div>
+        <div class="photo-section-single">
+            <div class="photo-box">
+                <div class="photo-label before">📷 불 량 사 진</div>
+                <div class="photo-area photo-area-large" id="beforeArea" onclick="document.getElementById('beforeFile').click()">
+                    <div class="placeholder"><span>📷</span>클릭하여 사진 업로드<br><small>(자동 압축 - 30KB 이하)</small></div>
+                </div>
+                <input type="file" id="beforeFile" accept="image/*" onchange="compressImage(this, 'beforeArea', 'beforeInfo')">
+                <div class="photo-info" id="beforeInfo"></div>
+                <div class="photo-controls">
+                    <button class="btn" onclick="document.getElementById('beforeFile').click()">📁 사진 선택</button>
+                    <button class="btn btn-danger" onclick="clearPhoto('beforeArea','beforeInfo','beforeFile', '📷', '클릭하여 사진 업로드')">🗑 삭제</button>
+                </div>
+                <table class="info-table" style="margin-top:12px;">
+                    <tr>
+                        <th>불량 설명</th>
+                        <td><textarea id="beforeDesc" placeholder="불량 위치, 크기, 형태, 빈도 등 상세 설명" style="min-height:70px;"></textarea></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. 원인 분석 -->
+    <div class="section">
+        <div class="section-title">4. 원 인 분 석 (D4: Root Cause Analysis)</div>
+        <div class="cause-grid">
+            <div class="cause-box">
+                <h4>■ 발생 원인 (Occurrence)</h4>
+                <textarea id="causeOccur" placeholder="왜 불량이 발생했는가?&#10;(5Why 분석)&#10;&#10;Why 1: &#10;Why 2: &#10;Why 3: &#10;Why 4: &#10;Why 5: &#10;&#10;근본원인: "></textarea>
+            </div>
+            <div class="cause-box">
+                <h4>■ 유출 원인 (Detection)</h4>
+                <textarea id="causeOutflow" placeholder="왜 검출되지 못했는가?&#10;(5Why 분석)&#10;&#10;Why 1: &#10;Why 2: &#10;Why 3: &#10;Why 4: &#10;Why 5: &#10;&#10;근본원인: "></textarea>
+            </div>
+        </div>
+        <table class="info-table" style="margin-top:0; border-top:none;">
+            <tr>
+                <th>4M 분석</th>
+                <td>
+                    <textarea id="cause4M" placeholder="Man(작업자): &#10;Machine(설비): &#10;Material(자재): &#10;Method(방법): " style="min-height:90px;"></textarea>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- 5. 응급조치 -->
+    <div class="section">
+        <div class="section-title">5. 응 급 조 치 (D3: Containment Action)</div>
+        <table class="info-table">
+            <tr>
+                <th>응급조치 내용</th>
+                <td><textarea id="emergency" placeholder="예:&#10;① 사내 재공/완제품 재고 전수선별 (수량: 1,500개, 불량: 3개)&#10;② 출하 보류 LOT 격리 (수량: 800개)&#10;③ 동일 공정 임시 100% 검사 실시&#10;④ 불량품 별도 격리(빨강 식별표) 및 폐기 처리" style="min-height:100px;"></textarea></td>
+            </tr>
+            <tr>
+                <th>실시일자</th>
+                <td><input type="date" id="emergencyDate"></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- 6. 개선 활동 -->
+    <div class="section">
+        <div class="section-title">6. 개 선 활 동 내 역 (D5: Corrective Action)</div>
+        <div class="btn-row">
+            <span style="font-size:12px; color:#666;">※ 발생원인 / 유출원인에 대한 개선 대책을 각각 기재</span>
+            <button class="btn" onclick="addActionRow()">+ 항목 추가</button>
+        </div>
+        <table class="action-table" id="actionTable">
+            <thead>
+                <tr>
+                    <th style="width:40px;">No</th>
+                    <th style="width:90px;">구분</th>
+                    <th>개선 대책 내용</th>
+                    <th style="width:110px;">목표일</th>
+                    <th style="width:110px;">완료일</th>
+                    <th style="width:100px;">담당자</th>
+                    <th style="width:90px;">진행상태</th>
+                    <th style="width:60px;">관리</th>
+                </tr>
+            </thead>
+            <tbody id="actionBody">
+                <!-- JS로 생성 -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 7. 효과 검증 -->
+    <div class="section">
+        <div class="section-title">7. 효 과 검 증 (D6: Verification)</div>
+        <table class="info-table">
+            <tr>
+                <th>검증 방법</th>
+                <td colspan="3"><textarea id="verifyMethod" placeholder="예: 개선 후 LOT 3건(15,000개) 전수검사 / 사내 4주간 모니터링 / 자주검사 데이터 추적"></textarea></td>
+            </tr>
+            <tr>
+                <th>개선 전 PPM</th>
+                <td><input type="text" id="beforePPM" placeholder="예: 2,400 PPM"></td>
+                <th>개선 후 PPM</th>
+                <td><input type="text" id="afterPPM" placeholder="예: 0 PPM"></td>
+            </tr>
+            <tr>
+                <th>검증 결과</th>
+                <td colspan="3"><textarea id="verifyResult" placeholder="개선 효과에 대한 정량적 검증 결과 기술"></textarea></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- 8. 재발방지 / 수평전개 -->
+    <div class="section">
+        <div class="section-title">8. 재 발 방 지 / 수 평 전 개 (D7: Prevention)</div>
+        <table class="info-table">
+            <tr>
+                <th>표준화 (Control Plan / 작업표준 등)</th>
+                <td><textarea id="standardize" placeholder="예:&#10;- Control Plan 개정 (Rev. 04 → Rev. 05)&#10;- 작업표준서 (WI-PRS-012) 개정 및 작업자 교육&#10;- 점검 체크시트 추가&#10;- PFMEA 업데이트 (RPN 재평가)"></textarea></td>
+            </tr>
+            <tr>
+                <th>수평전개 (유사품 / 유사공정)</th>
+                <td><textarea id="horizontal" placeholder="예:&#10;- 동일 금형 사용 품번: ___, ___, ___ 점검 완료&#10;- 동일 설비 운영 공정 점검 및 표준 반영"></textarea></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- 9. 자체 최종 확인 -->
+    <div class="section">
+        <div class="section-title">9. 자 체 최 종 확 인 (사 내 관 리)</div>
+        <table class="info-table">
+            <tr>
+                <th>최종 처리 상태</th>
+                <td>
+                    <select id="finalStatus">
+                        <option value="">-- 선택 --</option>
+                        <option>개선 완료 (Closed)</option>
+                        <option>조건부 완료 (모니터링중)</option>
+                        <option>보완 필요</option>
+                        <option>진행중 (Open)</option>
+                        <option>장기과제 이관</option>
+                    </select>
+                </td>
+                <th>완료일자</th>
+                <td><input type="date" id="closeDate"></td>
+            </tr>
+            <tr>
+                <th>품질팀 검증자</th>
+                <td><input type="text" id="qaVerifier" placeholder="검증자 / 직위"></td>
+                <th>차기 모니터링 기간</th>
+                <td><input type="text" id="monitorPeriod" placeholder="예: 향후 3개월간 LOT별 추적관리"></td>
+            </tr>
+            <tr>
+                <th>관련 문서 개정 현황</th>
+                <td colspan="3"><textarea id="docRevision" placeholder="예:&#10;- Control Plan: CP-XXX-XX (Rev.04 → Rev.05) 완료&#10;- PFMEA: FM-XXX-XX (RPN 120 → 40) 완료&#10;- 작업표준서: WI-PRS-012 (Rev.02 → Rev.03) 완료&#10;- 검사기준서: IS-XXX-XX 개정 완료"></textarea></td>
+            </tr>
+            <tr>
+                <th>유사 품번 / 공정<br>점검 결과</th>
+                <td colspan="3"><textarea id="similarCheck" placeholder="수평전개 대상 품번 및 공정 점검 결과&#10;예:&#10;- 동일 금형 사용 품번 5종 점검 → 이상없음&#10;- 동일 공정 다른 설비 2호기, 3호기 점검 → 표준 반영 완료"></textarea></td>
+            </tr>
+            <tr>
+                <th>특이사항 / 향후 과제</th>
+                <td colspan="3"><textarea id="remarks" placeholder="기타 특이사항, 잔여 리스크, 향후 추가 개선 필요사항 등"></textarea></td>
+            </tr>
+        </table>
+    </div>
+
+</div>
+
+<!-- 설정 모달 -->
+<div class="modal-overlay" id="settingsModal">
+    <div class="modal-box" style="max-width:760px;">
+        <div class="modal-header">
+            <h2>⚙️ 설정</h2>
+            <button class="modal-close" onclick="closeSettings()">×</button>
+        </div>
+        <div class="modal-body">
+            <!-- Supabase 설정 -->
+            <div class="supabase-card">
+                <div class="supabase-title">🔧 Supabase 설정</div>
+                <div class="supabase-field">
+                    <label>URL</label>
+                    <input type="text" id="supabaseUrl" placeholder="https://••••••••••••.supabase.co" autocomplete="off">
+                </div>
+                <div class="supabase-field">
+                    <label>Anon Key</label>
+                    <input type="password" id="supabaseKey" placeholder="••••••••••••••••••••••••" autocomplete="off">
+                </div>
+            </div>
+
+            <!-- SQL 토글 -->
+            <div class="sql-toggle" id="sqlToggle">
+                <div class="sql-toggle-header" onclick="toggleSQL()">
+                    <span class="sql-toggle-arrow">▶</span>
+                    <span>📋 Supabase SQL (테이블 생성)</span>
+                </div>
+                <div class="sql-toggle-body">
+                    <div class="sql-code" id="sqlCode">-- 특별불량 개선활동 보고서 테이블
+CREATE TABLE IF NOT EXISTS special_defect_reports (
+    id BIGSERIAL PRIMARY KEY,
+    doc_no TEXT,
+    write_date DATE,
+    dept TEXT,
+    occur_date DATE,
+    customer TEXT,
+    part_no TEXT,
+    lot_no TEXT,
+    qty TEXT,
+    process TEXT,
+    grade TEXT,
+    writer TEXT,
+    claim_no TEXT,
+    defect_desc TEXT,
+    impact TEXT,
+    before_img TEXT,
+    before_desc TEXT,
+    cause_occur TEXT,
+    cause_outflow TEXT,
+    cause_4m TEXT,
+    emergency TEXT,
+    emergency_date DATE,
+    actions JSONB,
+    verify_method TEXT,
+    before_ppm TEXT,
+    after_ppm TEXT,
+    verify_result TEXT,
+    standardize TEXT,
+    horizontal TEXT,
+    final_status TEXT,
+    close_date DATE,
+    qa_verifier TEXT,
+    monitor_period TEXT,
+    doc_revision TEXT,
+    similar_check TEXT,
+    remarks TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 마스터 데이터 테이블 (발생부서/고객사/품번/발생공정)
+CREATE TABLE IF NOT EXISTS special_defect_master (
+    id BIGSERIAL PRIMARY KEY,
+    category TEXT NOT NULL,  -- dept, customer, partNo, process
+    item_value TEXT NOT NULL,
+    sort_order INT DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(category, item_value)
+);
+
+-- RLS 활성화 (사내망 사용 시 정책 별도 설정)
+ALTER TABLE special_defect_reports ENABLE ROW LEVEL SECURITY;
+ALTER TABLE special_defect_master ENABLE ROW LEVEL SECURITY;
+
+-- 모든 사용자 읽기/쓰기 허용 정책 (사내용)
+CREATE POLICY "Enable all access for reports" ON special_defect_reports FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Enable all access for master" ON special_defect_master FOR ALL USING (true) WITH CHECK (true);</div>
+                    <button class="btn-copy-sql" onclick="copySQL()">📋 SQL 복사</button>
+                </div>
+            </div>
+
+            <!-- 저장 버튼 -->
+            <button class="btn-save-all" onclick="saveSupabaseConfig()">💾 모든 설정 서버에 저장</button>
+
+            <!-- 연결 상태 -->
+            <div class="connection-status" style="margin-top:14px;">
+                <div class="status-title">📡 연결 상태</div>
+                <div class="status-row">
+                    <span class="status-dot" id="statusDot"></span>
+                    <span id="statusText">Supabase: 미설정</span>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- 마스터 데이터 -->
+            <div class="master-section-title">📑 마스터 데이터</div>
+            <div class="modal-tabs" style="margin-bottom:12px;">
+                <button class="modal-tab active" data-tab="dept" onclick="switchTab('dept')">발생부서</button>
+                <button class="modal-tab" data-tab="customer" onclick="switchTab('customer')">고객사</button>
+                <button class="modal-tab" data-tab="partNo" onclick="switchTab('partNo')">품번</button>
+                <button class="modal-tab" data-tab="process" onclick="switchTab('process')">발생공정</button>
+            </div>
+            <div class="master-list" id="masterList">
+                <!-- JS로 동적 생성 -->
+            </div>
+            <div class="master-add-row">
+                <input type="text" id="newItemInput" placeholder="새 항목 입력 후 추가" onkeypress="if(event.key==='Enter') addMasterItem()">
+                <button onclick="addMasterItem()">+ 추가</button>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <span class="info-text">※ 마스터 변경은 자동 저장 / Supabase는 [모든 설정 서버에 저장] 클릭</span>
+            <button class="btn" onclick="closeSettings()">닫기</button>
+        </div>
+    </div>
+</div>
+
+<!-- 이력 조회 모달 -->
+<div class="modal-overlay" id="historyModal">
+    <div class="modal-box" style="max-width:900px;">
+        <div class="modal-header">
+            <h2>📋 보고서 이력 조회</h2>
+            <button class="modal-close" onclick="closeHistory()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="history-filter">
+                <input type="text" id="historySearch" placeholder="🔍 문서번호 / 품번 / 고객사 / 작성자 검색..." onkeyup="renderHistoryList()">
+                <button class="btn" onclick="loadHistoryList()">🔄 새로고침</button>
+            </div>
+            <div id="historyListWrap">
+                <div class="master-empty">이력을 불러오려면 [새로고침] 버튼을 누르세요.</div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <span class="info-text">※ 행을 클릭하면 작성 화면에 불러옵니다.</span>
+            <button class="btn" onclick="closeHistory()">닫기</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// =========================================
+// 0. 마스터 데이터 (발생부서/고객사/품번/발생공정)
+// =========================================
+const DEFAULT_MASTER = {
+    dept: ['품질관리팀', '생산1팀', '생산2팀', '프레스공정', '가공공정', '세척공정', '금형팀', '설비보전팀', '자재팀', '출하검사'],
+    customer: ['SKF씰', '일진', '진양오일씰', '한국에스케이프씰', '현대모비스', '현대트랜시스', '기아', '내수'],
+    partNo: ['IW-BDA-1106-CB', 'OW-BDA-1106-CB'],
+    process: ['수입검사', 'BLANKING', 'PIERCING', 'FORMING', 'TRIMMING', '프레스', '가공', '세척', '열처리', '출하검사', '사내 자주검사', '사외 클레임 (참고)']
+};
+const MASTER_KEY = 'special_defect_master';
+let masterData = loadMaster();
+let currentTab = 'dept';
+const TAB_LABELS = { dept: '발생부서', customer: '고객사', partNo: '품번', process: '발생공정' };
+
+function loadMaster() {
+    try {
+        const saved = localStorage.getItem(MASTER_KEY);
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            // 누락된 키는 기본값으로 보완
+            return {
+                dept: parsed.dept || [...DEFAULT_MASTER.dept],
+                customer: parsed.customer || [...DEFAULT_MASTER.customer],
+                partNo: parsed.partNo || [...DEFAULT_MASTER.partNo],
+                process: parsed.process || [...DEFAULT_MASTER.process]
+            };
+        }
+    } catch(e) {}
+    return JSON.parse(JSON.stringify(DEFAULT_MASTER));
+}
+
+function saveMaster() {
+    try {
+        localStorage.setItem(MASTER_KEY, JSON.stringify(masterData));
+    } catch(e) {
+        alert('마스터 저장 실패: ' + e.message);
+    }
+}
+
+function populateSelect(selectId, items, currentValue) {
+    const sel = document.getElementById(selectId);
+    if (!sel) return;
+    const prevValue = currentValue !== undefined ? currentValue : sel.value;
+    sel.innerHTML = '<option value="">-- 선택 --</option>' +
+        items.map(item => `<option ${item===prevValue?'selected':''}>${item}</option>`).join('');
+}
+
+function refreshAllSelects() {
+    populateSelect('dept', masterData.dept);
+    populateSelect('customer', masterData.customer);
+    populateSelect('partNo', masterData.partNo);
+    populateSelect('process', masterData.process);
+}
+
+// 설정 모달 열기/닫기
+function openSettings() {
+    document.getElementById('settingsModal').classList.add('active');
+    switchTab(currentTab);
+    updateConnectionStatus();
+}
+function closeSettings() {
+    document.getElementById('settingsModal').classList.remove('active');
+    refreshAllSelects(); // 변경사항을 select에 반영
+}
+
+function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.modal-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+    });
+    renderMasterList();
+    document.getElementById('newItemInput').placeholder = `새 ${TAB_LABELS[tab]} 입력 후 추가`;
+    document.getElementById('newItemInput').value = '';
+}
+
+function renderMasterList() {
+    const list = document.getElementById('masterList');
+    const items = masterData[currentTab];
+    if (items.length === 0) {
+        list.innerHTML = '<div class="master-empty">등록된 항목이 없습니다. 아래에서 추가하세요.</div>';
+        return;
+    }
+    list.innerHTML = items.map((item, idx) => `
+        <div class="master-item">
+            <input type="text" class="master-edit" value="${item.replace(/"/g,'&quot;')}" 
+                   onchange="editMasterItem(${idx}, this.value)">
+            <button class="master-del" onclick="deleteMasterItem(${idx})">삭제</button>
+        </div>
+    `).join('');
+}
+
+function addMasterItem() {
+    const input = document.getElementById('newItemInput');
+    const value = input.value.trim();
+    if (!value) {
+        alert('항목을 입력하세요.');
+        return;
+    }
+    if (masterData[currentTab].includes(value)) {
+        alert('이미 등록된 항목입니다.');
+        return;
+    }
+    masterData[currentTab].push(value);
+    saveMaster();
+    renderMasterList();
+    input.value = '';
+    input.focus();
+}
+
+function editMasterItem(idx, newValue) {
+    newValue = newValue.trim();
+    if (!newValue) {
+        alert('빈 값으로 수정할 수 없습니다.');
+        renderMasterList();
+        return;
+    }
+    masterData[currentTab][idx] = newValue;
+    saveMaster();
+}
+
+function deleteMasterItem(idx) {
+    if (!confirm(`'${masterData[currentTab][idx]}' 항목을 삭제하시겠습니까?`)) return;
+    masterData[currentTab].splice(idx, 1);
+    saveMaster();
+    renderMasterList();
+}
+
+// 모달 외부 클릭 시 닫기
+document.getElementById('settingsModal').addEventListener('click', function(e) {
+    if (e.target === this) closeSettings();
+});
+
+// 초기 select 채우기
+refreshAllSelects();
+
+// =========================================
+// 1. 이미지 압축 (30KB 이하)
+// =========================================
+function compressImage(input, areaId, infoId) {
+    const file = input.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+        alert('이미지 파일만 업로드 가능합니다.');
+        return;
+    }
+    
+    const originalSize = file.size;
+    const targetSize = 30 * 1024; // 30KB
+    const infoEl = document.getElementById(infoId);
+    infoEl.innerHTML = `원본: ${(originalSize/1024).toFixed(1)}KB → 압축중...`;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            // 압축 시도: 크기와 품질을 단계적으로 낮춤
+            let maxDim = 800;
+            let quality = 0.85;
+            let attempt = 0;
+            const maxAttempts = 20;
+            
+            function tryCompress() {
+                const canvas = document.createElement('canvas');
+                let w = img.width, h = img.height;
+                
+                if (w > h) {
+                    if (w > maxDim) { h = h * (maxDim/w); w = maxDim; }
+                } else {
+                    if (h > maxDim) { w = w * (maxDim/h); h = maxDim; }
+                }
+                
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(0, 0, w, h);
+                ctx.drawImage(img, 0, 0, w, h);
+                
+                const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                const sizeBytes = Math.round((dataUrl.length - 'data:image/jpeg;base64,'.length) * 3 / 4);
+                
+                attempt++;
+                
+                if (sizeBytes <= targetSize || attempt >= maxAttempts) {
+                    // 완료
+                    const area = document.getElementById(areaId);
+                    area.innerHTML = `<img src="${dataUrl}" alt="사진">`;
+                    area.dataset.image = dataUrl;
+                    
+                    const finalKB = (sizeBytes/1024).toFixed(1);
+                    const cls = sizeBytes <= targetSize ? 'size-ok' : 'size-warn';
+                    const status = sizeBytes <= targetSize ? '✓ 30KB 이하' : '⚠ 30KB 초과';
+                    infoEl.innerHTML = `원본 ${(originalSize/1024).toFixed(1)}KB → <span class="${cls}">${finalKB}KB ${status}</span> (${w.toFixed(0)}×${h.toFixed(0)}px)`;
+                } else {
+                    // 다음 시도: 품질이나 크기를 줄임
+                    if (quality > 0.4) {
+                        quality -= 0.1;
+                    } else {
+                        maxDim = Math.round(maxDim * 0.85);
+                        quality = 0.7;
+                    }
+                    setTimeout(tryCompress, 0);
+                }
+            }
+            tryCompress();
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function clearPhoto(areaId, infoId, fileId, icon, text) {
+    const area = document.getElementById(areaId);
+    area.innerHTML = `<div class="placeholder"><span>${icon}</span>${text}<br><small>(자동 압축 - 30KB 이하)</small></div>`;
+    delete area.dataset.image;
+    document.getElementById(infoId).innerHTML = '';
+    document.getElementById(fileId).value = '';
+}
+
+// =========================================
+// 2. 개선활동 테이블 동적 추가
+// =========================================
+let actionRowCount = 0;
+
+function addActionRow(data) {
+    actionRowCount++;
+    const tbody = document.getElementById('actionBody');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td class="no-col">${actionRowCount}</td>
+        <td data-label="구분">
+            <select>
+                <option value="">선택</option>
+                <option ${data && data.type==='발생원인 대책'?'selected':''}>발생원인 대책</option>
+                <option ${data && data.type==='유출원인 대책'?'selected':''}>유출원인 대책</option>
+                <option ${data && data.type==='표준화'?'selected':''}>표준화</option>
+                <option ${data && data.type==='교육'?'selected':''}>교육</option>
+                <option ${data && data.type==='수평전개'?'selected':''}>수평전개</option>
+            </select>
+        </td>
+        <td data-label="개선 대책 내용"><textarea placeholder="개선 대책 상세 내용 (구체적, 측정 가능하게 기재)">${data?data.content:''}</textarea></td>
+        <td class="date-col" data-label="목표일"><input type="date" value="${data?data.target:''}"></td>
+        <td class="date-col" data-label="완료일"><input type="date" value="${data?data.complete:''}"></td>
+        <td class="person-col" data-label="담당자"><input type="text" placeholder="담당자" value="${data?data.person:''}"></td>
+        <td class="status-col" data-label="진행상태">
+            <select class="status-select">
+                <option value="">선택</option>
+                <option ${data && data.status==='계획'?'selected':''}>계획</option>
+                <option ${data && data.status==='진행중'?'selected':''}>진행중</option>
+                <option ${data && data.status==='완료'?'selected':''}>완료</option>
+                <option ${data && data.status==='검증중'?'selected':''}>검증중</option>
+            </select>
+        </td>
+        <td class="action-col" data-label="관리"><button class="del-btn" onclick="deleteRow(this)">삭제</button></td>
+    `;
+    tbody.appendChild(tr);
+}
+
+function deleteRow(btn) {
+    if (confirm('이 항목을 삭제하시겠습니까?')) {
+        btn.closest('tr').remove();
+        renumberRows();
+    }
+}
+
+function renumberRows() {
+    const rows = document.querySelectorAll('#actionBody tr');
+    actionRowCount = 0;
+    rows.forEach(row => {
+        actionRowCount++;
+        row.querySelector('.no-col').textContent = actionRowCount;
+    });
+}
+
+// 초기 3개 행 생성
+for (let i = 0; i < 3; i++) addActionRow();
+
+// =========================================
+// 3. Supabase 설정 관리
+// =========================================
+const SUPABASE_CONFIG_KEY = 'special_defect_supabase_config';
+
+function loadSupabaseConfig() {
+    try {
+        const raw = localStorage.getItem(SUPABASE_CONFIG_KEY);
+        if (raw) {
+            const cfg = JSON.parse(raw);
+            const urlEl = document.getElementById('supabaseUrl');
+            const keyEl = document.getElementById('supabaseKey');
+            if (urlEl && cfg.url) urlEl.value = cfg.url;
+            if (keyEl && cfg.key) keyEl.value = cfg.key;
+            updateConnectionStatus();
+        }
+    } catch(e) {}
+}
+
+function saveSupabaseConfig() {
+    const url = document.getElementById('supabaseUrl').value.trim();
+    const key = document.getElementById('supabaseKey').value.trim();
+    
+    if (!url || !key) {
+        if (!confirm('URL 또는 Anon Key가 비어있습니다.\n그래도 저장하시겠습니까?')) return;
+    }
+    
+    // URL 형식 간단 검증
+    if (url && !url.startsWith('https://')) {
+        alert('URL은 https:// 로 시작해야 합니다.');
+        return;
+    }
+    
+    try {
+        localStorage.setItem(SUPABASE_CONFIG_KEY, JSON.stringify({url, key}));
+        updateConnectionStatus();
+        alert('✓ 설정이 저장되었습니다.');
+    } catch(e) {
+        alert('저장 실패: ' + e.message);
+    }
+}
+
+function updateConnectionStatus() {
+    const dot = document.getElementById('statusDot');
+    const text = document.getElementById('statusText');
+    if (!dot || !text) return;
+    
+    try {
+        const raw = localStorage.getItem(SUPABASE_CONFIG_KEY);
+        if (raw) {
+            const cfg = JSON.parse(raw);
+            if (cfg.url && cfg.key) {
+                dot.className = 'status-dot connected';
+                text.textContent = 'Supabase: 설정됨';
+                return;
+            }
+        }
+    } catch(e) {}
+    dot.className = 'status-dot disconnected';
+    text.textContent = 'Supabase: 미설정';
+}
+
+function toggleSQL() {
+    const el = document.getElementById('sqlToggle');
+    el.classList.toggle('open');
+}
+
+function copySQL() {
+    const code = document.getElementById('sqlCode').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+        alert('✓ SQL이 클립보드에 복사되었습니다.\nSupabase SQL Editor에 붙여넣어 실행하세요.');
+    }).catch(err => {
+        // 폴백
+        const ta = document.createElement('textarea');
+        ta.value = code;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); alert('✓ SQL이 복사되었습니다.'); } catch(e) { alert('복사 실패'); }
+        document.body.removeChild(ta);
+    });
+}
+
+// =========================================
+// 3-1. Supabase 클라이언트 가져오기
+// =========================================
+let _supabaseClient = null;
+let _currentReportId = null; // 현재 편집 중인 보고서 ID (있으면 UPDATE, 없으면 INSERT)
+
+// DB 드롭다운 메뉴 토글
+function toggleDBMenu(event) {
+    event.stopPropagation();
+    const menu = document.getElementById('dbMenu');
+    menu.classList.toggle('active');
+}
+function closeDBMenu() {
+    document.getElementById('dbMenu').classList.remove('active');
+}
+// 외부 클릭 시 메뉴 닫기
+document.addEventListener('click', function(e) {
+    const menu = document.getElementById('dbMenu');
+    if (menu && menu.classList.contains('active') && !e.target.closest('.db-dropdown')) {
+        menu.classList.remove('active');
+    }
+});
+
+function getSupabase() {
+    if (_supabaseClient) return _supabaseClient;
+    
+    const raw = localStorage.getItem(SUPABASE_CONFIG_KEY);
+    if (!raw) {
+        alert('⚠️ Supabase 설정이 없습니다.\n⚙️ 설정에서 URL과 Anon Key를 입력하세요.');
+        return null;
+    }
+    const cfg = JSON.parse(raw);
+    if (!cfg.url || !cfg.key) {
+        alert('⚠️ Supabase URL 또는 Key가 비어있습니다.');
+        return null;
+    }
+    if (typeof supabase === 'undefined') {
+        alert('⚠️ Supabase 라이브러리를 불러올 수 없습니다.\n인터넷 연결을 확인하세요.');
+        return null;
+    }
+    _supabaseClient = supabase.createClient(cfg.url, cfg.key);
+    return _supabaseClient;
+}
+
+function showLoading(msg) {
+    let el = document.getElementById('globalLoading');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'globalLoading';
+        el.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center;';
+        el.innerHTML = '<div style="background:#1a3a6c;color:#fff;padding:24px 40px;border-radius:8px;font-size:15px;text-align:center;"><div style="font-size:30px;margin-bottom:10px;">⏳</div><div id="loadingMsg"></div></div>';
+        document.body.appendChild(el);
+    }
+    document.getElementById('loadingMsg').textContent = msg || '처리중...';
+    el.style.display = 'flex';
+}
+function hideLoading() {
+    const el = document.getElementById('globalLoading');
+    if (el) el.style.display = 'none';
+}
+
+// =========================================
+// 3-2. 보고서 Supabase 저장
+// =========================================
+async function saveToSupabase() {
+    const client = getSupabase();
+    if (!client) return;
+    
+    // 필수 항목 검증
+    const docNo = document.getElementById('docNo').value.trim();
+    if (!docNo) {
+        alert('⚠️ 문서번호를 입력하세요.');
+        document.getElementById('docNo').focus();
+        return;
+    }
+    
+    const action = _currentReportId ? '수정' : '신규 저장';
+    if (!confirm(`작성한 보고서를 Supabase에 ${action}하시겠습니까?`)) return;
+    
+    showLoading(`Supabase에 ${action} 중...`);
+    
+    const payload = {
+        doc_no: docNo,
+        write_date: document.getElementById('writeDate').value || null,
+        dept: document.getElementById('dept').value || null,
+        occur_date: document.getElementById('occurDate').value || null,
+        customer: document.getElementById('customer').value || null,
+        part_no: document.getElementById('partNo').value || null,
+        lot_no: document.getElementById('lotNo').value || null,
+        qty: document.getElementById('qty').value || null,
+        process: document.getElementById('process').value || null,
+        grade: document.getElementById('grade').value || null,
+        writer: document.getElementById('writer').value || null,
+        claim_no: document.getElementById('claimNo').value || null,
+        defect_desc: document.getElementById('defectDesc').value || null,
+        impact: document.getElementById('impact').value || null,
+        before_img: document.getElementById('beforeArea').dataset.image || null,
+        before_desc: document.getElementById('beforeDesc').value || null,
+        cause_occur: document.getElementById('causeOccur').value || null,
+        cause_outflow: document.getElementById('causeOutflow').value || null,
+        cause_4m: document.getElementById('cause4M').value || null,
+        emergency: document.getElementById('emergency').value || null,
+        emergency_date: document.getElementById('emergencyDate').value || null,
+        actions: collectActions(),
+        verify_method: document.getElementById('verifyMethod').value || null,
+        before_ppm: document.getElementById('beforePPM').value || null,
+        after_ppm: document.getElementById('afterPPM').value || null,
+        verify_result: document.getElementById('verifyResult').value || null,
+        standardize: document.getElementById('standardize').value || null,
+        horizontal: document.getElementById('horizontal').value || null,
+        final_status: document.getElementById('finalStatus').value || null,
+        close_date: document.getElementById('closeDate').value || null,
+        qa_verifier: document.getElementById('qaVerifier').value || null,
+        monitor_period: document.getElementById('monitorPeriod').value || null,
+        doc_revision: document.getElementById('docRevision').value || null,
+        similar_check: document.getElementById('similarCheck').value || null,
+        remarks: document.getElementById('remarks').value || null,
+        updated_at: new Date().toISOString()
+    };
+    
+    try {
+        let result;
+        if (_currentReportId) {
+            // UPDATE
+            result = await client
+                .from('special_defect_reports')
+                .update(payload)
+                .eq('id', _currentReportId)
+                .select();
+        } else {
+            // INSERT
+            result = await client
+                .from('special_defect_reports')
+                .insert(payload)
+                .select();
+        }
+        
+        hideLoading();
+        
+        if (result.error) {
+            console.error(result.error);
+            alert('❌ 저장 실패:\n' + result.error.message + '\n\n테이블이 생성되어 있는지 확인하세요.\n(⚙️ 설정 → Supabase SQL → 복사해서 실행)');
+            return;
+        }
+        
+        // 저장된 ID 기억
+        if (result.data && result.data[0]) {
+            _currentReportId = result.data[0].id;
+        }
+        
+        alert(`✅ Supabase에 ${action} 완료\n문서번호: ${docNo}`);
+    } catch(err) {
+        hideLoading();
+        console.error(err);
+        alert('❌ 저장 중 오류:\n' + err.message);
+    }
+}
+
+function collectActions() {
+    const actions = [];
+    document.querySelectorAll('#actionBody tr').forEach(tr => {
+        const cells = tr.querySelectorAll('select, input, textarea');
+        if (cells.length >= 6) {
+            const action = {
+                type: cells[0].value,
+                content: cells[1].value,
+                target: cells[2].value,
+                complete: cells[3].value,
+                person: cells[4].value,
+                status: cells[5].value
+            };
+            // 빈 행은 제외
+            if (action.type || action.content || action.person) {
+                actions.push(action);
+            }
+        }
+    });
+    return actions;
+}
+
+// =========================================
+// 3-3. 이력 조회
+// =========================================
+let _historyData = []; // 캐시
+
+async function openHistory() {
+    document.getElementById('historyModal').classList.add('active');
+    if (_historyData.length === 0) {
+        await loadHistoryList();
+    } else {
+        renderHistoryList();
+    }
+}
+
+function closeHistory() {
+    document.getElementById('historyModal').classList.remove('active');
+}
+
+async function loadHistoryList() {
+    const client = getSupabase();
+    if (!client) return;
+    
+    const wrap = document.getElementById('historyListWrap');
+    wrap.innerHTML = '<div class="loading-spinner">이력을 불러오는 중...</div>';
+    
+    try {
+        const { data, error } = await client
+            .from('special_defect_reports')
+            .select('id, doc_no, write_date, occur_date, customer, part_no, lot_no, dept, process, grade, writer, final_status, updated_at')
+            .order('updated_at', { ascending: false })
+            .limit(200);
+        
+        if (error) {
+            wrap.innerHTML = `<div class="master-empty" style="color:#c0392b;">❌ 조회 실패: ${error.message}<br><br>테이블이 생성되어 있는지 확인하세요.</div>`;
+            return;
+        }
+        
+        _historyData = data || [];
+        renderHistoryList();
+    } catch(err) {
+        wrap.innerHTML = `<div class="master-empty" style="color:#c0392b;">❌ 오류: ${err.message}</div>`;
+    }
+}
+
+function renderHistoryList() {
+    const wrap = document.getElementById('historyListWrap');
+    const search = (document.getElementById('historySearch').value || '').toLowerCase().trim();
+    
+    let list = _historyData;
+    if (search) {
+        list = list.filter(r => 
+            (r.doc_no || '').toLowerCase().includes(search) ||
+            (r.part_no || '').toLowerCase().includes(search) ||
+            (r.customer || '').toLowerCase().includes(search) ||
+            (r.writer || '').toLowerCase().includes(search) ||
+            (r.lot_no || '').toLowerCase().includes(search)
+        );
+    }
+    
+    if (list.length === 0) {
+        wrap.innerHTML = '<div class="master-empty">' + 
+            (search ? `검색 결과 없음: "${search}"` : '저장된 이력이 없습니다.') + 
+            '</div>';
+        return;
+    }
+    
+    const statusClass = (s) => {
+        if (!s) return 'pending';
+        if (s.includes('완료')) return 'complete';
+        if (s.includes('진행') || s.includes('모니터링')) return 'progress';
+        return 'pending';
+    };
+    
+    let html = '<div class="history-list-scroll"><table class="history-table"><thead><tr>' +
+        '<th class="col-doc-no">문서번호</th>' +
+        '<th class="col-customer">고객사</th>' +
+        '<th class="col-part">품번</th>' +
+        '<th class="col-date">발생일</th>' +
+        '<th>LOT</th>' +
+        '<th>작성자</th>' +
+        '<th class="col-status">상태</th>' +
+        '<th class="col-action">관리</th>' +
+        '</tr></thead><tbody>';
+    
+    list.forEach(r => {
+        html += `<tr onclick="loadReport(${r.id})">
+            <td class="col-doc-no"><strong>${r.doc_no || '-'}</strong></td>
+            <td>${r.customer || '-'}</td>
+            <td class="col-part">${r.part_no || '-'}</td>
+            <td>${r.occur_date || r.write_date || '-'}</td>
+            <td>${r.lot_no || '-'}</td>
+            <td>${r.writer || '-'}</td>
+            <td><span class="status-badge ${statusClass(r.final_status)}">${r.final_status || '미설정'}</span></td>
+            <td><button class="history-row-btn" onclick="event.stopPropagation(); deleteReport(${r.id}, '${(r.doc_no||'').replace(/'/g,"\\'")}')">삭제</button></td>
+        </tr>`;
+    });
+    
+    html += '</tbody></table></div>';
+    html += `<div style="margin-top:10px; font-size:12px; color:#666; text-align:right;">총 ${list.length}건 / 전체 ${_historyData.length}건</div>`;
+    wrap.innerHTML = html;
+}
+
+// =========================================
+// 3-4. 보고서 불러오기
+// =========================================
+async function loadReport(id) {
+    const client = getSupabase();
+    if (!client) return;
+    
+    if (!confirm('이 보고서를 작성 화면에 불러오시겠습니까?\n(현재 작성 중인 내용은 사라집니다)')) return;
+    
+    showLoading('보고서를 불러오는 중...');
+    
+    try {
+        const { data, error } = await client
+            .from('special_defect_reports')
+            .select('*')
+            .eq('id', id)
+            .single();
+        
+        hideLoading();
+        
+        if (error) {
+            alert('❌ 불러오기 실패:\n' + error.message);
+            return;
+        }
+        
+        applyReportData(data);
+        _currentReportId = id;
+        closeHistory();
+        
+        // 화면 상단으로 스크롤
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // 작은 안내 배너 표시
+        showEditBanner(data.doc_no);
+    } catch(err) {
+        hideLoading();
+        alert('❌ 오류: ' + err.message);
+    }
+}
+
+function showEditBanner(docNo) {
+    let banner = document.getElementById('editBanner');
+    if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'editBanner';
+        banner.style.cssText = 'position:fixed; top:0; left:0; right:0; background:#16a085; color:#fff; padding:10px 20px; text-align:center; z-index:998; font-size:13px; font-weight:600; box-shadow:0 2px 6px rgba(0,0,0,0.2);';
+        document.body.appendChild(banner);
+    }
+    banner.innerHTML = `📝 편집 모드: 문서번호 <strong>${docNo}</strong> 수정 중 &nbsp;|&nbsp; 
+        <a href="#" onclick="newReport(); return false;" style="color:#fff; text-decoration:underline;">새 보고서 작성</a>`;
+    banner.style.display = 'block';
+}
+
+function newReport() {
+    if (!confirm('새 보고서를 작성하시겠습니까?\n(현재 화면 내용은 사라집니다)')) return;
+    location.reload();
+}
+
+function applyReportData(data) {
+    // 마스터 새로고침
+    refreshAllSelects();
+    
+    const fieldMap = {
+        doc_no: 'docNo', write_date: 'writeDate', dept: 'dept',
+        occur_date: 'occurDate', customer: 'customer', part_no: 'partNo',
+        lot_no: 'lotNo', qty: 'qty', process: 'process', grade: 'grade',
+        writer: 'writer', claim_no: 'claimNo', defect_desc: 'defectDesc',
+        impact: 'impact', before_desc: 'beforeDesc',
+        cause_occur: 'causeOccur', cause_outflow: 'causeOutflow', cause_4m: 'cause4M',
+        emergency: 'emergency', emergency_date: 'emergencyDate',
+        verify_method: 'verifyMethod', before_ppm: 'beforePPM',
+        after_ppm: 'afterPPM', verify_result: 'verifyResult',
+        standardize: 'standardize', horizontal: 'horizontal',
+        final_status: 'finalStatus', close_date: 'closeDate',
+        qa_verifier: 'qaVerifier', monitor_period: 'monitorPeriod',
+        doc_revision: 'docRevision', similar_check: 'similarCheck',
+        remarks: 'remarks'
+    };
+    
+    Object.keys(fieldMap).forEach(dbKey => {
+        const elId = fieldMap[dbKey];
+        const el = document.getElementById(elId);
+        if (!el) return;
+        const value = data[dbKey] || '';
+        
+        // select에 없는 값이면 임시 옵션 추가
+        if (el.tagName === 'SELECT' && value) {
+            const exists = Array.from(el.options).some(o => o.value === value);
+            if (!exists) {
+                const opt = document.createElement('option');
+                opt.value = value;
+                opt.textContent = value + ' (마스터에 없음)';
+                el.appendChild(opt);
+            }
+        }
+        el.value = value;
+    });
+    
+    // 사진 복원
+    if (data.before_img) {
+        const area = document.getElementById('beforeArea');
+        area.innerHTML = `<img src="${data.before_img}" alt="사진">`;
+        area.dataset.image = data.before_img;
+    } else {
+        clearPhoto('beforeArea','beforeInfo','beforeFile', '📷', '클릭하여 사진 업로드');
+    }
+    
+    // 개선활동 테이블 복원
+    document.getElementById('actionBody').innerHTML = '';
+    actionRowCount = 0;
+    if (data.actions && Array.isArray(data.actions) && data.actions.length > 0) {
+        data.actions.forEach(a => addActionRow(a));
+    } else {
+        for (let i = 0; i < 3; i++) addActionRow();
+    }
+}
+
+// =========================================
+// 3-5. 보고서 삭제
+// =========================================
+async function deleteReport(id, docNo) {
+    if (!confirm(`정말 삭제하시겠습니까?\n문서번호: ${docNo}\n\n※ 이 작업은 되돌릴 수 없습니다.`)) return;
+    
+    const client = getSupabase();
+    if (!client) return;
+    
+    showLoading('삭제 중...');
+    
+    try {
+        const { error } = await client
+            .from('special_defect_reports')
+            .delete()
+            .eq('id', id);
+        
+        hideLoading();
+        
+        if (error) {
+            alert('❌ 삭제 실패:\n' + error.message);
+            return;
+        }
+        
+        // 캐시에서 제거
+        _historyData = _historyData.filter(r => r.id !== id);
+        renderHistoryList();
+        
+        // 편집 중이던 보고서를 삭제했다면 새 보고서 모드로
+        if (_currentReportId === id) {
+            _currentReportId = null;
+            const banner = document.getElementById('editBanner');
+            if (banner) banner.style.display = 'none';
+        }
+        
+        alert('✅ 삭제 완료');
+    } catch(err) {
+        hideLoading();
+        alert('❌ 오류: ' + err.message);
+    }
+}
+
+// 작성용 데이터 수집 (PDF/HTML 저장 시 활용)
+function collectData() {
+    const data = {};
+    document.querySelectorAll('#report input, #report textarea, #report select').forEach((el, i) => {
+        if (el.id) data[el.id] = el.value;
+    });
+    data._beforeImg = document.getElementById('beforeArea').dataset.image || '';
+    data._actions = [];
+    document.querySelectorAll('#actionBody tr').forEach(tr => {
+        const cells = tr.querySelectorAll('select, input, textarea');
+        if (cells.length >= 6) {
+            data._actions.push({
+                type: cells[0].value,
+                content: cells[1].value,
+                target: cells[2].value,
+                complete: cells[3].value,
+                person: cells[4].value,
+                status: cells[5].value
+            });
+        }
+    });
+    return data;
+}
+
+// =========================================
+// 4. HTML 파일로 저장 (사진 포함)
+// =========================================
+// =========================================
+// 4-1. PDF로 다운로드 (html2pdf.js 사용)
+// =========================================
+function exportPDF() {
+    if (typeof html2pdf === 'undefined') {
+        alert('PDF 라이브러리가 로드되지 않았습니다.\n인터넷 연결을 확인해주세요.');
+        return;
+    }
+    
+    const docNo = document.getElementById('docNo').value || '특별불량개선활동';
+    const partNo = document.getElementById('partNo').value || '';
+    const date = new Date().toISOString().slice(0,10);
+    
+    let pdfName = `특별불량_개선활동_${docNo}`;
+    if (partNo) pdfName += `_${partNo}`;
+    pdfName += `_${date}.pdf`;
+    
+    // 진행 안내 표시
+    const overlay = document.createElement('div');
+    overlay.id = 'pdfProgressOverlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;font-size:16px;';
+    overlay.innerHTML = '<div style="background:#1a3a6c;padding:30px 50px;border-radius:8px;text-align:center;"><div style="font-size:40px;margin-bottom:12px;">📕</div><div style="font-weight:600;margin-bottom:8px;">PDF 생성중...</div><div style="font-size:13px;color:#ffd;">잠시만 기다려주세요 (약 5-15초)</div></div>';
+    document.body.appendChild(overlay);
+    
+    // PDF 모드 활성화
+    document.body.classList.add('pdf-mode');
+    
+    // textarea 높이 자동 조정 - 입력된 내용이 모두 보이도록
+    const textareas = document.querySelectorAll('textarea');
+    const savedHeights = [];
+    textareas.forEach(ta => {
+        savedHeights.push(ta.style.height);
+        ta.style.height = 'auto';
+        ta.style.height = (ta.scrollHeight + 6) + 'px';
+    });
+    
+    // 빈 select 옵션이 보이지 않게 잠시 처리 - 선택안된 select의 placeholder 텍스트
+    const selectBackups = [];
+    document.querySelectorAll('select').forEach(sel => {
+        if (sel.value === '') {
+            selectBackups.push({el: sel, html: sel.innerHTML});
+            // 빈 옵션 숨김
+            sel.style.color = '#999';
+        }
+    });
+    
+    const element = document.getElementById('report');
+    const opt = {
+        margin: [8, 8, 8, 8],  // mm
+        filename: pdfName,
+        image: { type: 'jpeg', quality: 0.92 },
+        html2canvas: {
+            scale: 2,           // 해상도 (고품질)
+            useCORS: true,
+            letterRendering: true,
+            logging: false,
+            backgroundColor: '#ffffff'
+        },
+        jsPDF: {
+            unit: 'mm',
+            format: 'a4',
+            orientation: 'portrait',
+            compress: true
+        },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+    
+    // PDF 생성 및 다운로드
+    html2pdf().set(opt).from(element).save().then(() => {
+        // 원래 상태로 복원
+        document.body.classList.remove('pdf-mode');
+        textareas.forEach((ta, i) => { ta.style.height = savedHeights[i]; });
+        selectBackups.forEach(b => { b.el.style.color = ''; });
+        document.body.removeChild(overlay);
+    }).catch(err => {
+        document.body.classList.remove('pdf-mode');
+        textareas.forEach((ta, i) => { ta.style.height = savedHeights[i]; });
+        selectBackups.forEach(b => { b.el.style.color = ''; });
+        document.body.removeChild(overlay);
+        alert('PDF 생성 중 오류 발생:\n' + err.message);
+    });
+}
+
+// =========================================
+// 4-2. HTML 파일로 저장 (사진 포함)
+// =========================================
+function exportHTML() {
+    // 현재 입력값을 HTML attribute로 고정
+    document.querySelectorAll('#report input[type="text"], #report input[type="date"]').forEach(el => {
+        el.setAttribute('value', el.value);
+    });
+    document.querySelectorAll('#report textarea').forEach(el => {
+        el.textContent = el.value;
+    });
+    document.querySelectorAll('#report select').forEach(sel => {
+        Array.from(sel.options).forEach(opt => {
+            if (opt.value === sel.value) opt.setAttribute('selected', 'selected');
+            else opt.removeAttribute('selected');
+        });
+    });
+    
+    const html = '<!DOCTYPE html>\n<html lang="ko">\n' + document.documentElement.innerHTML.replace(/^<head>/, '<head>').substring(document.documentElement.innerHTML.indexOf('<head>')) ;
+    const fullHtml = '<!DOCTYPE html>\n<html lang="ko">\n' + document.documentElement.innerHTML + '\n</html>';
+    
+    const blob = new Blob([fullHtml], {type: 'text/html;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    
+    const docNo = document.getElementById('docNo').value || 'report';
+    const date = new Date().toISOString().slice(0,10);
+    a.href = url;
+    a.download = `특별불량_개선활동_${docNo}_${date}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    alert('✓ HTML 파일로 저장되었습니다.\n파일을 열면 모든 내용과 사진이 그대로 보존됩니다.');
+}
+
+// 작성일자 기본값
+document.getElementById('writeDate').value = new Date().toISOString().slice(0,10);
+
+// Supabase 설정 초기 로드
+loadSupabaseConfig();
+
+// 보고서 모든 입력 필드 자동완성 차단 (URL/이메일 등이 자동 입력되는 것 방지)
+document.querySelectorAll('#report input, #report textarea').forEach(el => {
+    el.setAttribute('autocomplete', 'off');
+    el.setAttribute('autocorrect', 'off');
+    el.setAttribute('autocapitalize', 'off');
+    el.setAttribute('spellcheck', 'false');
+});
+
+// =========================================
+// 5. 인쇄/PDF 출력 시 textarea 내용 전체 표시
+// =========================================
+let _savedHeights = new WeakMap();
+
+window.addEventListener('beforeprint', function() {
+    document.querySelectorAll('textarea').forEach(ta => {
+        _savedHeights.set(ta, ta.style.height);
+        // 자동 높이로 조정 - 내용 전체가 보이도록
+        ta.style.height = 'auto';
+        ta.style.height = (ta.scrollHeight + 4) + 'px';
+        ta.style.overflow = 'visible';
+    });
+});
+
+window.addEventListener('afterprint', function() {
+    document.querySelectorAll('textarea').forEach(ta => {
+        const saved = _savedHeights.get(ta);
+        if (saved !== undefined) ta.style.height = saved;
+        ta.style.overflow = '';
+    });
+});
+</script>
+
+</body>
+</html>
