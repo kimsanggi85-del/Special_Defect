@@ -403,6 +403,15 @@ textarea {
     display: flex;
     gap: 8px;
 }
+/* 툴바 버튼 폭 동일하게 통일 */
+.toolbar-right .btn {
+    width: 112px;
+    padding: 8px 6px;
+    text-align: center;
+    white-space: nowrap;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+}
 input[type="file"] { display: none; }
 
 /* ============================
@@ -522,6 +531,42 @@ input[type="file"] { display: none; }
     white-space: pre-wrap !important;
     resize: none !important;
 }
+/* ── PDF 생성 시 입력칸을 대체하는 div (글자 잘림 방지) ── */
+.pdf-mode .pdf-field-snap {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    font-size: 11px !important;
+    line-height: 1.45 !important;
+    color: #000 !important;
+    min-height: 15px !important;
+    padding: 2px 3px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    text-align: left !important;
+}
+/* 한 줄짜리(날짜/담당자/PPM 등)는 가운데 정렬 */
+.pdf-mode .action-table .pdf-field-snap,
+.pdf-mode .pdf-field-snap.snap-center { text-align: center !important; }
+.pdf-mode .action-table td .pdf-field-snap.snap-left { text-align: left !important; }
+/* 칸 경계 또렷하게 (가시화) */
+.pdf-mode table.info-table th,
+.pdf-mode table.info-table td,
+.pdf-mode .action-table th,
+.pdf-mode .action-table td { border: 1px solid #555 !important; }
+/* 개선활동 표: 내용 칸이 넓게 펼쳐지도록 */
+.pdf-mode .action-table { table-layout: auto !important; width: 100% !important; }
+.pdf-mode .action-table th:nth-child(3),
+.pdf-mode .action-table td:nth-child(3) {
+    width: auto !important;
+    min-width: 200px !important;
+    text-align: left !important;
+    white-space: normal !important;
+}
+.pdf-mode .action-table td:nth-child(3) .pdf-field-snap { text-align: left !important; }
+/* 관리(삭제) 열은 PDF에서 머리글까지 숨김 */
+.pdf-mode .action-table th:last-child,
+.pdf-mode .action-table td:last-child { display: none !important; }
 
 /* ============================
    설정 모달
@@ -1367,28 +1412,11 @@ input[type="file"] { display: none; }
 
 <div class="toolbar">
     <div class="toolbar-left">
-        <strong style="color:#1a3a6c; font-size:14px;">📋 특별불량 개선활동 보고서</strong>
+        <strong style="color:#1a3a6c; font-size:14px;">📋 특별불량 개선활동 보고서</strong><span style="font-size:10px; color:#9aa7b5; margin-left:6px;">v2.3</span>
     </div>
     <div class="toolbar-right">
-        <div class="db-dropdown">
-            <button class="btn btn-db" onclick="toggleDBMenu(event)">☁️ DB ▾</button>
-            <div class="db-menu" id="dbMenu">
-                <button class="db-menu-item" onclick="saveToSupabase(); closeDBMenu();">
-                    <span class="db-menu-icon">💾</span>
-                    <div>
-                        <div class="db-menu-title">현재 보고서 저장</div>
-                        <div class="db-menu-desc">Supabase에 저장 / 수정</div>
-                    </div>
-                </button>
-                <button class="db-menu-item" onclick="openHistory(); closeDBMenu();">
-                    <span class="db-menu-icon">📋</span>
-                    <div>
-                        <div class="db-menu-title">이력 조회</div>
-                        <div class="db-menu-desc">저장된 보고서 목록</div>
-                    </div>
-                </button>
-            </div>
-        </div>
+        <button class="btn btn-db" onclick="saveToSupabase()">💾 보고서 저장</button>
+        <button class="btn btn-db" onclick="openHistory()">📋 이력 조회</button>
         <button class="btn btn-success" onclick="exportHTML()">📥 파일 저장</button>
         <button class="btn" onclick="window.print()">🖨️ 인쇄</button>
         <button class="btn btn-pdf" onclick="exportPDF()">📕 PDF 저장</button>
@@ -2648,23 +2676,29 @@ function exportPDF() {
     // PDF 모드 활성화
     document.body.classList.add('pdf-mode');
     
-    // textarea 높이 자동 조정 - 입력된 내용이 모두 보이도록
-    const textareas = document.querySelectorAll('textarea');
-    const savedHeights = [];
-    textareas.forEach(ta => {
-        savedHeights.push(ta.style.height);
-        ta.style.height = 'auto';
-        ta.style.height = (ta.scrollHeight + 6) + 'px';
-    });
-    
-    // 빈 select 옵션이 보이지 않게 잠시 처리 - 선택안된 select의 placeholder 텍스트
-    const selectBackups = [];
-    document.querySelectorAll('select').forEach(sel => {
-        if (sel.value === '') {
-            selectBackups.push({el: sel, html: sel.innerHTML});
-            // 빈 옵션 숨김
-            sel.style.color = '#999';
+    // 입력 요소(input/textarea/select)를 html2canvas가 글자를 자르지 않도록
+    // 같은 내용의 div로 임시 치환 (생성 후 원복) → 자동 줄바꿈되어 칸 밖 글자 잘림 방지
+    const fieldSnapshots = [];
+    document.querySelectorAll('#report input, #report textarea, #report select').forEach(el => {
+        if (el.type === 'file' || el.type === 'button') return;
+        let text = '';
+        let oneLine = false;
+        if (el.tagName === 'SELECT') {
+            text = (el.selectedIndex >= 0) ? el.options[el.selectedIndex].text : '';
+            if (text === '선택') text = '';
+            oneLine = true;
+        } else if (el.tagName === 'INPUT') {
+            text = el.value || '';
+            oneLine = true;   // 날짜/담당자/PPM 등 한 줄
+        } else {
+            text = el.value || '';   // textarea
         }
+        const div = document.createElement('div');
+        div.className = 'pdf-field-snap' + (oneLine ? ' snap-center' : ' snap-left');
+        div.textContent = text;
+        el.style.display = 'none';
+        el.parentNode.insertBefore(div, el.nextSibling);
+        fieldSnapshots.push({el: el, div: div});
     });
     
     const element = document.getElementById('report');
@@ -2692,13 +2726,11 @@ function exportPDF() {
     html2pdf().set(opt).from(element).save().then(() => {
         // 원래 상태로 복원
         document.body.classList.remove('pdf-mode');
-        textareas.forEach((ta, i) => { ta.style.height = savedHeights[i]; });
-        selectBackups.forEach(b => { b.el.style.color = ''; });
+        fieldSnapshots.forEach(s => { s.div.remove(); s.el.style.display = ''; });
         document.body.removeChild(overlay);
     }).catch(err => {
         document.body.classList.remove('pdf-mode');
-        textareas.forEach((ta, i) => { ta.style.height = savedHeights[i]; });
-        selectBackups.forEach(b => { b.el.style.color = ''; });
+        fieldSnapshots.forEach(s => { s.div.remove(); s.el.style.display = ''; });
         document.body.removeChild(overlay);
         alert('PDF 생성 중 오류 발생:\n' + err.message);
     });
