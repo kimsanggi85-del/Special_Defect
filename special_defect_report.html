@@ -1663,16 +1663,16 @@ input[type="file"] { display: none; }
             <button class="modal-close" onclick="closeSettings()">×</button>
         </div>
         <div class="modal-body">
-            <!-- Supabase 설정 -->
+            <!-- Supabase 설정 (고정/잠금) -->
             <div class="supabase-card">
-                <div class="supabase-title">🔧 Supabase 설정</div>
+                <div class="supabase-title">🔒 Supabase 설정 <span style="font-size:11px; font-weight:400; color:#9fb3d1;">(고정됨 · 수정 불가)</span></div>
                 <div class="supabase-field">
                     <label>URL</label>
-                    <input type="text" id="supabaseUrl" placeholder="https://••••••••••••.supabase.co" autocomplete="off">
+                    <input type="text" id="supabaseUrl" readonly tabindex="-1" autocomplete="off" style="cursor:not-allowed; opacity:0.85; background:#0f2238;">
                 </div>
                 <div class="supabase-field">
                     <label>Anon Key</label>
-                    <input type="password" id="supabaseKey" placeholder="••••••••••••••••••••••••" autocomplete="off">
+                    <input type="password" id="supabaseKey" readonly tabindex="-1" autocomplete="off" style="cursor:not-allowed; opacity:0.85; background:#0f2238;">
                 </div>
             </div>
 
@@ -1746,8 +1746,10 @@ CREATE POLICY "Enable all access for master" ON special_defect_master FOR ALL US
                 </div>
             </div>
 
-            <!-- 저장 버튼 -->
-            <button class="btn-save-all" onclick="saveSupabaseConfig()">💾 모든 설정 서버에 저장</button>
+            <!-- 접속 정보 고정 안내 (저장 버튼 대체) -->
+            <div style="margin-top:14px; padding:12px 14px; background:#eef2f7; border:1px solid #d6dde6; border-radius:6px; text-align:center; color:#5a6b80; font-size:13px;">
+                🔒 Supabase 접속 정보는 코드에 고정되어 있어 변경할 수 없습니다.
+            </div>
 
             <!-- 연결 상태 -->
             <div class="connection-status" style="margin-top:14px;">
@@ -2098,23 +2100,9 @@ const SUPABASE_CONFIG_KEY = 'special_defect_supabase_config';
 const SUPABASE_FIXED_URL = 'https://ebthltdmxpzlkfwvdloz.supabase.co';
 const SUPABASE_FIXED_KEY = 'sb_publishable_ZSgcZapb7cTgFezGmOV_ow_9MT15SnS';   // publishable key (브라우저용 공개키)
 
-// localStorage 설정이 있으면 우선 사용하고, 없으면 위 고정값으로 자동 대체
+// 접속 정보는 코드에 고정 — localStorage/UI로 변경 불가 (잠금)
 function resolveSupabaseConfig() {
-    let url = '', key = '';
-    try {
-        const raw = localStorage.getItem(SUPABASE_CONFIG_KEY);
-        if (raw) {
-            const cfg = JSON.parse(raw);
-            if (cfg.url) url = cfg.url;
-            if (cfg.key) key = cfg.key;
-        }
-    } catch(e) {}
-    // 비어있으면 고정값으로 대체
-    if (!url) url = SUPABASE_FIXED_URL;
-    if (!key || key === '여기에_ANON_KEY_붙여넣기') {
-        if (SUPABASE_FIXED_KEY && SUPABASE_FIXED_KEY !== '여기에_ANON_KEY_붙여넣기') key = SUPABASE_FIXED_KEY;
-    }
-    return { url, key };
+    return { url: SUPABASE_FIXED_URL, key: SUPABASE_FIXED_KEY };
 }
 
 function loadSupabaseConfig() {
@@ -2129,26 +2117,8 @@ function loadSupabaseConfig() {
 }
 
 function saveSupabaseConfig() {
-    const url = document.getElementById('supabaseUrl').value.trim();
-    const key = document.getElementById('supabaseKey').value.trim();
-    
-    if (!url || !key) {
-        if (!confirm('URL 또는 Anon Key가 비어있습니다.\n그래도 저장하시겠습니까?')) return;
-    }
-    
-    // URL 형식 간단 검증
-    if (url && !url.startsWith('https://')) {
-        alert('URL은 https:// 로 시작해야 합니다.');
-        return;
-    }
-    
-    try {
-        localStorage.setItem(SUPABASE_CONFIG_KEY, JSON.stringify({url, key}));
-        updateConnectionStatus();
-        alert('✓ 설정이 저장되었습니다.');
-    } catch(e) {
-        alert('저장 실패: ' + e.message);
-    }
+    alert('🔒 Supabase 접속 정보는 코드에 고정되어 있어 변경할 수 없습니다.');
+    return;
 }
 
 function updateConnectionStatus() {
