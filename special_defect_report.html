@@ -1100,6 +1100,78 @@ input[type="file"] { display: none; }
         padding: 10px;
         font-size: 13px;
     }
+    /* ===== 모바일 추가 대응 ===== */
+    /* 가로 넘침 방지 */
+    .container { overflow-x: hidden; }
+    /* 설정 모달 SQL 코드 가로 스크롤 */
+    pre, code { white-space: pre-wrap; word-break: break-all; max-width: 100%; }
+    .modal-overlay { padding: 12px 8px; }
+    .modal-body { padding: 12px; }
+    /* 이력 조회 검색 영역 세로 배치 */
+    .history-filter { flex-direction: column; gap: 8px; }
+    .history-filter input, .history-filter .btn { width: 100%; }
+    /* 이력 조회 표 → 카드형 전환 */
+    .history-list-scroll { overflow-x: hidden; }
+    .history-table { width: 100%; }
+    .history-table thead { display: none; }
+    .history-table, .history-table tbody, .history-table tr, .history-table td {
+        display: block;
+        width: 100% !important;
+    }
+    .history-table tr {
+        margin-bottom: 12px;
+        border: 2px solid #1a3a6c;
+        border-radius: 6px;
+        padding: 8px 10px;
+        background: #fafbfc;
+    }
+    .history-table td {
+        border: none !important;
+        border-bottom: 1px dashed #ddd !important;
+        padding: 6px 2px;
+        text-align: right;
+        font-size: 13px;
+        min-height: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+    }
+    .history-table td:last-child { border-bottom: none !important; }
+    .history-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #1a3a6c;
+        font-size: 12px;
+        text-align: left;
+        flex-shrink: 0;
+    }
+    .history-table td.col-doc-no {
+        background: #1a3a6c;
+        color: #fff;
+        border-radius: 4px;
+        margin-bottom: 4px;
+        padding: 8px 10px;
+    }
+    .history-table td.col-doc-no::before { color: #cdd8ea; }
+    .history-row-btn { padding: 6px 14px; }
+    /* DB 드롭다운 메뉴 - 모바일에서 화면 중앙 고정 (잘림 방지) */
+    .db-dropdown { position: static; }
+    .db-menu {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        right: auto;
+        transform: translate(-50%, -50%);
+        width: calc(100vw - 40px);
+        max-width: 340px;
+        min-width: 0;
+        z-index: 1100;
+        box-shadow: 0 0 0 100vmax rgba(0,0,0,0.45), 0 10px 40px rgba(0,0,0,0.4);
+    }
+    .db-menu-item { padding: 16px 16px; }
+    .db-menu-title { font-size: 15px; }
+    .db-menu-desc { font-size: 12px; }
 }
 
 @media print {
@@ -2377,14 +2449,14 @@ function renderHistoryList() {
     
     list.forEach(r => {
         html += `<tr onclick="loadReport(${r.id})">
-            <td class="col-doc-no"><strong>${r.doc_no || '-'}</strong></td>
-            <td>${r.customer || '-'}</td>
-            <td class="col-part">${r.part_no || '-'}</td>
-            <td>${r.occur_date || r.write_date || '-'}</td>
-            <td>${r.lot_no || '-'}</td>
-            <td>${r.writer || '-'}</td>
-            <td><span class="status-badge ${statusClass(r.final_status)}">${r.final_status || '미설정'}</span></td>
-            <td><button class="history-row-btn" onclick="event.stopPropagation(); deleteReport(${r.id}, '${(r.doc_no||'').replace(/'/g,"\\'")}')">삭제</button></td>
+            <td class="col-doc-no" data-label="문서번호"><strong>${r.doc_no || '-'}</strong></td>
+            <td data-label="고객사">${r.customer || '-'}</td>
+            <td class="col-part" data-label="품번">${r.part_no || '-'}</td>
+            <td data-label="발생일">${r.occur_date || r.write_date || '-'}</td>
+            <td data-label="LOT">${r.lot_no || '-'}</td>
+            <td data-label="작성자">${r.writer || '-'}</td>
+            <td data-label="상태"><span class="status-badge ${statusClass(r.final_status)}">${r.final_status || '미설정'}</span></td>
+            <td data-label="관리"><button class="history-row-btn" onclick="event.stopPropagation(); deleteReport(${r.id}, '${(r.doc_no||'').replace(/'/g,"\\'")}')">삭제</button></td>
         </tr>`;
     });
     
