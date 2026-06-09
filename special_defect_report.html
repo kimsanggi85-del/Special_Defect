@@ -926,6 +926,10 @@ input[type="file"] { display: none; }
 .history-table .col-date { width: 100px; }
 .history-table .col-status { width: 100px; }
 .history-table .col-action { width: 70px; }
+.history-table .col-lot { width: 120px; white-space: nowrap; }
+.history-table .col-writer { width: 160px; white-space: nowrap; }
+/* 표 내용이 한 글자씩 밀려 내려가지 않도록 한 줄 유지 */
+.history-table th, .history-table td { white-space: nowrap; }
 .history-row-btn {
     background: #c0392b;
     color: #fff;
@@ -949,6 +953,7 @@ input[type="file"] { display: none; }
 .history-list-scroll {
     max-height: 50vh;
     overflow-y: auto;
+    overflow-x: auto;
     border: 1px solid #d6dde6;
     border-radius: 4px;
 }
@@ -1181,6 +1186,7 @@ input[type="file"] { display: none; }
         justify-content: space-between;
         align-items: center;
         gap: 10px;
+        white-space: normal !important;
     }
     .history-table td:last-child { border-bottom: none !important; }
     .history-table td::before {
@@ -1412,7 +1418,7 @@ input[type="file"] { display: none; }
 
 <div class="toolbar">
     <div class="toolbar-left">
-        <strong style="color:#1a3a6c; font-size:14px;">📋 특별불량 개선활동 보고서</strong><span style="font-size:10px; color:#9aa7b5; margin-left:6px;">v2.3</span>
+        <strong style="color:#1a3a6c; font-size:14px;">📋 특별불량 개선활동 보고서</strong><span style="font-size:10px; color:#9aa7b5; margin-left:6px;">v2.4</span>
     </div>
     <div class="toolbar-right">
         <button class="btn btn-db" onclick="saveToSupabase()">💾 보고서 저장</button>
@@ -2439,8 +2445,8 @@ function renderHistoryList() {
         '<th class="col-customer">고객사</th>' +
         '<th class="col-part">품번</th>' +
         '<th class="col-date">발생일</th>' +
-        '<th>LOT</th>' +
-        '<th>작성자</th>' +
+        '<th class="col-lot">LOT</th>' +
+        '<th class="col-writer">작성자</th>' +
         '<th class="col-status">상태</th>' +
         '<th class="col-action">관리</th>' +
         '</tr></thead><tbody>';
@@ -2451,8 +2457,8 @@ function renderHistoryList() {
             <td data-label="고객사">${r.customer || '-'}</td>
             <td class="col-part" data-label="품번">${r.part_no || '-'}</td>
             <td data-label="발생일">${r.occur_date || r.write_date || '-'}</td>
-            <td data-label="LOT">${r.lot_no || '-'}</td>
-            <td data-label="작성자">${r.writer || '-'}</td>
+            <td class="col-lot" data-label="LOT">${r.lot_no || '-'}</td>
+            <td class="col-writer" data-label="작성자">${r.writer || '-'}</td>
             <td data-label="상태"><span class="status-badge ${statusClass(r.final_status)}">${r.final_status || '미설정'}</span></td>
             <td data-label="관리"><button class="history-row-btn" onclick="event.stopPropagation(); deleteReport(${r.id}, '${(r.doc_no||'').replace(/'/g,"\\'")}')">삭제</button></td>
         </tr>`;
