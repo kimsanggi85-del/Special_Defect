@@ -2017,17 +2017,42 @@ for (let i = 0; i < 3; i++) addActionRow();
 // =========================================
 const SUPABASE_CONFIG_KEY = 'special_defect_supabase_config';
 
-function loadSupabaseConfig() {
+// =========================================
+// ★ 고정 Supabase 접속 정보 (모든 PC 공통)
+//   - 여기 값을 넣어두면 어느 PC에서 열어도 설정 입력 없이 자동 연결됩니다.
+//   - Anon Key는 공개용(public) 키라 코드에 넣어도 안전합니다.
+//   - Anon Key 확인 위치: Supabase 대시보드 > Project Settings > API > Project API keys > anon public
+// =========================================
+const SUPABASE_FIXED_URL = 'https://ebthltdmxpzlkfwvdloz.supabase.co';
+const SUPABASE_FIXED_KEY = '여기에_ANON_KEY_붙여넣기';   // ← 이 한 줄만 본인 anon key로 교체하세요
+
+// localStorage 설정이 있으면 우선 사용하고, 없으면 위 고정값으로 자동 대체
+function resolveSupabaseConfig() {
+    let url = '', key = '';
     try {
         const raw = localStorage.getItem(SUPABASE_CONFIG_KEY);
         if (raw) {
             const cfg = JSON.parse(raw);
-            const urlEl = document.getElementById('supabaseUrl');
-            const keyEl = document.getElementById('supabaseKey');
-            if (urlEl && cfg.url) urlEl.value = cfg.url;
-            if (keyEl && cfg.key) keyEl.value = cfg.key;
-            updateConnectionStatus();
+            if (cfg.url) url = cfg.url;
+            if (cfg.key) key = cfg.key;
         }
+    } catch(e) {}
+    // 비어있으면 고정값으로 대체
+    if (!url) url = SUPABASE_FIXED_URL;
+    if (!key || key === '여기에_ANON_KEY_붙여넣기') {
+        if (SUPABASE_FIXED_KEY && SUPABASE_FIXED_KEY !== '여기에_ANON_KEY_붙여넣기') key = SUPABASE_FIXED_KEY;
+    }
+    return { url, key };
+}
+
+function loadSupabaseConfig() {
+    try {
+        const cfg = resolveSupabaseConfig();
+        const urlEl = document.getElementById('supabaseUrl');
+        const keyEl = document.getElementById('supabaseKey');
+        if (urlEl && cfg.url) urlEl.value = cfg.url;
+        if (keyEl && cfg.key && cfg.key !== '여기에_ANON_KEY_붙여넣기') keyEl.value = cfg.key;
+        updateConnectionStatus();
     } catch(e) {}
 }
 
@@ -2060,14 +2085,11 @@ function updateConnectionStatus() {
     if (!dot || !text) return;
     
     try {
-        const raw = localStorage.getItem(SUPABASE_CONFIG_KEY);
-        if (raw) {
-            const cfg = JSON.parse(raw);
-            if (cfg.url && cfg.key) {
-                dot.className = 'status-dot connected';
-                text.textContent = 'Supabase: 설정됨';
-                return;
-            }
+        const cfg = resolveSupabaseConfig();
+        if (cfg.url && cfg.key && cfg.key !== '여기에_ANON_KEY_붙여넣기') {
+            dot.className = 'status-dot connected';
+            text.textContent = 'Supabase: 설정됨';
+            return;
         }
     } catch(e) {}
     dot.className = 'status-dot disconnected';
@@ -2120,14 +2142,9 @@ document.addEventListener('click', function(e) {
 function getSupabase() {
     if (_supabaseClient) return _supabaseClient;
     
-    const raw = localStorage.getItem(SUPABASE_CONFIG_KEY);
-    if (!raw) {
-        alert('⚠️ Supabase 설정이 없습니다.\n⚙️ 설정에서 URL과 Anon Key를 입력하세요.');
-        return null;
-    }
-    const cfg = JSON.parse(raw);
-    if (!cfg.url || !cfg.key) {
-        alert('⚠️ Supabase URL 또는 Key가 비어있습니다.');
+    const cfg = resolveSupabaseConfig();
+    if (!cfg.url || !cfg.key || cfg.key === '여기에_ANON_KEY_붙여넣기') {
+        alert('⚠️ Supabase 접속 정보가 비어있습니다.\n코드 상단의 SUPABASE_FIXED_KEY 값을 본인 anon key로 교체하거나,\n⚙️ 설정에서 URL과 Anon Key를 입력하세요.');
         return null;
     }
     if (typeof supabase === 'undefined') {
