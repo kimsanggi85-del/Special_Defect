@@ -1412,17 +1412,94 @@ input[type="file"] { display: none; }
         print-color-adjust: exact !important;
     }
 }
+
+/* ============================
+   전자결재
+   ============================ */
+.btn.btn-approval { background: #8e44ad; }
+.btn.btn-approval:hover { background: #9b59b6; }
+.btn.btn-inbox { background: #d35400; position: relative; }
+.btn.btn-inbox:hover { background: #e67e22; }
+.inbox-count {
+    position: absolute; top: -6px; right: -6px;
+    background: #e74c3c; color: #fff; border-radius: 10px;
+    min-width: 18px; height: 18px; line-height: 18px; font-size: 11px;
+    padding: 0 5px; display: none; border: 2px solid #fff;
+}
+.approval-table td.sign-cell { vertical-align: middle; position: relative; }
+.sign-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 2px; }
+.sign-stamp {
+    width: 40px; height: 40px; border: 2px solid #c0392b; border-radius: 50%;
+    color: #c0392b; font-weight: 700; font-size: 11px; line-height: 1.1;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    word-break: keep-all; transform: rotate(-8deg);
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.sign-stamp.reject { border-color: #7f8c8d; color: #7f8c8d; }
+.sign-name { font-size: 11px; color: #333; font-weight: 600; }
+.sign-name.pending { color: #999; font-weight: 400; }
+.sign-date { font-size: 9px; color: #666; }
+.sign-wait { font-size: 10px; color: #e67e22; font-weight: 600; }
+.sign-skip { font-size: 18px; color: #bbb; }
+.approval-state {
+    display: inline-block; margin-right: 12px; align-self: center;
+    padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 700;
+}
+.ap-badge { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.ap-draft { background: #ecf0f1; color: #7f8c8d; }
+.ap-review { background: #fff3cd; color: #856404; }
+.ap-approve { background: #fde2c8; color: #a04000; }
+.ap-done { background: #d4edda; color: #155724; }
+.ap-reject { background: #f8d7da; color: #721c24; }
+#report.locked .photo-area { pointer-events: none; }
+#report.locked .btn-row, #report.locked .del-btn, #report.locked .photo-controls button { display: none !important; }
+#report.locked input, #report.locked textarea, #report.locked select { background: #fafafa; }
+.ap-form-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.ap-form-row label { width: 90px; flex: 0 0 90px; font-weight: 600; color: #1a3a6c; font-size: 13px; }
+.ap-form-row select, .ap-form-row input, .ap-form-row textarea {
+    flex: 1; padding: 8px 10px; border: 1px solid #c0c0c0; border-radius: 4px; font-size: 13px; background: #fff;
+}
+.ap-form-row textarea { min-height: 60px; resize: vertical; }
+.ap-step-badge {
+    display: inline-block; width: 22px; height: 22px; line-height: 22px; text-align: center;
+    border-radius: 50%; background: #1a3a6c; color: #fff; font-size: 11px; margin-right: 4px;
+}
+.ap-note { font-size: 12px; color: #666; background: #f5f7fa; border: 1px solid #e1e6ec; border-radius: 4px; padding: 8px 10px; margin-bottom: 12px; line-height: 1.6; }
+.ap-log { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 6px; }
+.ap-log th, .ap-log td { border: 1px solid #d6dde6; padding: 6px 8px; text-align: center; }
+.ap-log th { background: #eef2f7; color: #1a3a6c; }
+.ap-log td.comment { text-align: left; white-space: pre-wrap; }
+.inbox-tabs { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+.banner-btn {
+    margin-left: 6px; padding: 3px 10px; border: 1px solid rgba(255,255,255,0.8); border-radius: 4px;
+    background: rgba(255,255,255,0.15); color: #fff; font-size: 12px; font-weight: 600; cursor: pointer;
+}
+.banner-btn:hover { background: rgba(255,255,255,0.3); }
+.banner-btn.approve { background: #27ae60; border-color: #27ae60; }
+.banner-btn.reject { background: #c0392b; border-color: #c0392b; }
+@media print {
+    #editBanner, .approval-state { display: none !important; }
+    .sign-stamp { width: 32px; height: 32px; font-size: 9px; }
+}
+.pdf-mode #editBanner, .pdf-mode .approval-state { display: none !important; }
+@media screen and (max-width: 768px) {
+    .ap-form-row { flex-direction: column; align-items: stretch; gap: 4px; }
+    .ap-form-row label { width: auto; flex: none; }
+}
+#report.locked :disabled, #report.locked [readonly] { color: #333; -webkit-text-fill-color: #333; opacity: 1; cursor: default; }
 </style>
 </head>
 <body>
 
 <div class="toolbar">
     <div class="toolbar-left">
-        <strong style="color:#1a3a6c; font-size:14px;">📋 특별불량 개선활동 보고서</strong><span style="font-size:10px; color:#9aa7b5; margin-left:6px;">v2.4</span>
+        <strong style="color:#1a3a6c; font-size:14px;">📋 특별불량 개선활동 보고서</strong><span style="font-size:10px; color:#9aa7b5; margin-left:6px;">v2.5</span>
     </div>
     <div class="toolbar-right">
         <button class="btn btn-db" onclick="saveToSupabase()">💾 보고서 저장</button>
         <button class="btn btn-db" onclick="openHistory()">📋 이력 조회</button>
+        <button class="btn btn-approval" onclick="openSubmitApproval()">📤 결재상신</button>
+        <button class="btn btn-inbox" onclick="openInbox()">📥 결재함<span class="inbox-count" id="inboxCount"></span></button>
         <button class="btn btn-success" onclick="exportHTML()">📥 파일 저장</button>
         <button class="btn" onclick="window.print()">🖨️ 인쇄</button>
         <button class="btn btn-pdf" onclick="exportPDF()">📕 PDF 저장</button>
@@ -1440,12 +1517,13 @@ input[type="file"] { display: none; }
 
     <!-- 결재란 -->
     <div class="approval-box">
+        <span class="approval-state ap-badge ap-draft" id="approvalState">작성중</span>
         <table class="approval-table">
             <tr>
                 <td class="approval-label" rowspan="2">결재</td>
                 <th>담당</th><th>검토</th><th>승인</th>
             </tr>
-            <tr><td></td><td></td><td></td></tr>
+            <tr><td class="sign-cell" id="apCell1"></td><td class="sign-cell" id="apCell2"></td><td class="sign-cell" id="apCell3"></td></tr>
         </table>
     </div>
 
@@ -1775,7 +1853,31 @@ ALTER TABLE special_defect_master ENABLE ROW LEVEL SECURITY;
 
 -- 모든 사용자 읽기/쓰기 허용 정책 (사내용)
 CREATE POLICY "Enable all access for reports" ON special_defect_reports FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Enable all access for master" ON special_defect_master FOR ALL USING (true) WITH CHECK (true);</div>
+CREATE POLICY "Enable all access for master" ON special_defect_master FOR ALL USING (true) WITH CHECK (true);
+
+-- ===== [전자결재] (v2.5 추가) =====
+ALTER TABLE special_defect_reports
+    ADD COLUMN IF NOT EXISTS approval_status TEXT DEFAULT '작성중',
+    ADD COLUMN IF NOT EXISTS approval_step SMALLINT DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS approval_line JSONB;
+UPDATE special_defect_reports SET approval_status = '작성중' WHERE approval_status IS NULL;
+UPDATE special_defect_reports SET approval_step = 0 WHERE approval_step IS NULL;
+
+CREATE TABLE IF NOT EXISTS special_defect_approval_log (
+    id BIGSERIAL PRIMARY KEY,
+    report_id BIGINT REFERENCES special_defect_reports(id) ON DELETE CASCADE,
+    action TEXT NOT NULL,      -- 상신 / 승인 / 반려 / 회수
+    step_no SMALLINT,
+    step_role TEXT,            -- 담당 / 검토 / 승인
+    actor_name TEXT,
+    actor_dept TEXT,
+    comment TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_sd_approval_log_report ON special_defect_approval_log(report_id);
+ALTER TABLE special_defect_approval_log ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Enable all access for approval log" ON special_defect_approval_log FOR ALL USING (true) WITH CHECK (true);
+-- 결재자/PIN 은 사내 공용 user_pin 테이블(name, dept, pin_hash=SHA-256)을 사용합니다.</div>
                     <button class="btn-copy-sql" onclick="copySQL()">📋 SQL 복사</button>
                 </div>
             </div>
@@ -1828,7 +1930,7 @@ CREATE POLICY "Enable all access for master" ON special_defect_master FOR ALL US
         </div>
         <div class="modal-body">
             <div class="history-filter">
-                <input type="text" id="historySearch" placeholder="🔍 문서번호 / 품번 / 고객사 / 작성자 검색..." onkeyup="renderHistoryList()">
+                <input type="text" id="historySearch" placeholder="🔍 문서번호 / 품번 / 고객사 / 작성자 / 결재상태 검색..." onkeyup="renderHistoryList()">
                 <button class="btn" onclick="loadHistoryList()">🔄 새로고침</button>
             </div>
             <div id="historyListWrap">
@@ -1838,6 +1940,126 @@ CREATE POLICY "Enable all access for master" ON special_defect_master FOR ALL US
         <div class="modal-footer">
             <span class="info-text">※ 행을 클릭하면 작성 화면에 불러옵니다.</span>
             <button class="btn" onclick="closeHistory()">닫기</button>
+        </div>
+    </div>
+</div>
+
+<!-- 결재 상신 모달 -->
+<div class="modal-overlay" id="submitModal">
+    <div class="modal-box" style="max-width:560px;">
+        <div class="modal-header">
+            <h2>📤 결재 상신</h2>
+            <button class="modal-close" onclick="closeModal('submitModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="ap-note">
+                문서번호: <strong id="submitDocNo">-</strong><br>
+                결재선: <strong>담당(작성) → 검토 → 승인</strong> · 담당자 PIN으로 상신합니다.<br>
+                ※ 상신 후에는 보고서가 잠기며, 반려되거나 회수해야 수정할 수 있습니다.
+            </div>
+            <div class="ap-form-row">
+                <label><span class="ap-step-badge">1</span>담당</label>
+                <select id="apDrafter"></select>
+            </div>
+            <div class="ap-form-row">
+                <label>담당 PIN</label>
+                <input type="password" id="apDrafterPin" inputmode="numeric" maxlength="8" placeholder="PIN 4자리" autocomplete="new-password">
+            </div>
+            <div class="ap-form-row">
+                <label><span class="ap-step-badge">2</span>검토</label>
+                <select id="apReviewer"></select>
+            </div>
+            <div class="ap-form-row">
+                <label><span class="ap-step-badge">3</span>승인</label>
+                <select id="apApprover"></select>
+            </div>
+            <div class="ap-form-row">
+                <label>상신 의견</label>
+                <textarea id="apSubmitComment" placeholder="(선택) 검토/승인자에게 전달할 내용"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <span class="info-text">※ 결재자 목록: 사내 PIN 사용자(user_pin)</span>
+            <div style="display:flex; gap:6px;">
+                <button class="btn btn-secondary" onclick="closeModal('submitModal')">취소</button>
+                <button class="btn btn-approval" onclick="confirmSubmitApproval()">📤 상신</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 승인/반려/회수 PIN 확인 모달 -->
+<div class="modal-overlay" id="decisionModal">
+    <div class="modal-box" style="max-width:480px;">
+        <div class="modal-header">
+            <h2 id="decisionTitle">결재</h2>
+            <button class="modal-close" onclick="closeModal('decisionModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="ap-note" id="decisionInfo"></div>
+            <div class="ap-form-row">
+                <label>결재자</label>
+                <input type="text" id="decisionActor" readonly style="background:#f5f7fa;">
+            </div>
+            <div class="ap-form-row">
+                <label>PIN</label>
+                <input type="password" id="decisionPin" inputmode="numeric" maxlength="8" placeholder="PIN 4자리" autocomplete="new-password"
+                       onkeypress="if(event.key==='Enter') confirmDecision()">
+            </div>
+            <div class="ap-form-row">
+                <label id="decisionCommentLabel">의견</label>
+                <textarea id="decisionComment" placeholder="결재 의견"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <span class="info-text">※ PIN 입력이 전자서명을 대신합니다.</span>
+            <div style="display:flex; gap:6px;">
+                <button class="btn btn-secondary" onclick="closeModal('decisionModal')">취소</button>
+                <button class="btn" id="decisionBtn" onclick="confirmDecision()">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 결재함 모달 -->
+<div class="modal-overlay" id="inboxModal">
+    <div class="modal-box" style="max-width:900px;">
+        <div class="modal-header">
+            <h2>📥 결재함</h2>
+            <button class="modal-close" onclick="closeModal('inboxModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="ap-form-row">
+                <label>사용자</label>
+                <select id="inboxUser" onchange="onInboxUserChange()"></select>
+            </div>
+            <div class="inbox-tabs">
+                <button class="modal-tab active" data-ibtab="todo" onclick="switchInboxTab('todo')">결재 대기</button>
+                <button class="modal-tab" data-ibtab="mine" onclick="switchInboxTab('mine')">내가 상신한 문서</button>
+                <button class="modal-tab" data-ibtab="done" onclick="switchInboxTab('done')">내가 결재한 문서</button>
+                <button class="modal-tab" data-ibtab="all" onclick="switchInboxTab('all')">전체 진행중</button>
+                <button class="btn" style="margin-left:auto;" onclick="loadInbox()">🔄 새로고침</button>
+            </div>
+            <div id="inboxListWrap"><div class="master-empty">사용자를 선택하세요.</div></div>
+        </div>
+        <div class="modal-footer">
+            <span class="info-text">※ 행을 클릭하면 보고서를 열어 승인/반려할 수 있습니다.</span>
+            <button class="btn" onclick="closeModal('inboxModal')">닫기</button>
+        </div>
+    </div>
+</div>
+
+<!-- 결재 현황(이력) 모달 -->
+<div class="modal-overlay" id="apLogModal">
+    <div class="modal-box" style="max-width:720px;">
+        <div class="modal-header">
+            <h2>🧾 결재 진행현황</h2>
+            <button class="modal-close" onclick="closeModal('apLogModal')">×</button>
+        </div>
+        <div class="modal-body" id="apLogBody"></div>
+        <div class="modal-footer">
+            <span class="info-text"></span>
+            <button class="btn" onclick="closeModal('apLogModal')">닫기</button>
         </div>
     </div>
 </div>
@@ -2251,20 +2473,24 @@ function hideLoading() {
 // =========================================
 // 3-2. 보고서 Supabase 저장
 // =========================================
-async function saveToSupabase() {
+async function saveToSupabase(silent) {
     const client = getSupabase();
-    if (!client) return;
+    if (!client) return false;
+    if (isApprovalLocked()) {
+        alert('🔒 결재 진행중/완료된 문서는 수정할 수 없습니다.\n(반려 또는 회수 후 수정 가능)');
+        return false;
+    }
     
     // 필수 항목 검증
     const docNo = document.getElementById('docNo').value.trim();
     if (!docNo) {
         alert('⚠️ 문서번호를 입력하세요.');
         document.getElementById('docNo').focus();
-        return;
+        return false;
     }
     
     const action = _currentReportId ? '수정' : '신규 저장';
-    if (!confirm(`작성한 보고서를 Supabase에 ${action}하시겠습니까?`)) return;
+    if (!silent && !confirm(`작성한 보고서를 Supabase에 ${action}하시겠습니까?`)) return false;
     
     showLoading(`Supabase에 ${action} 중...`);
     
@@ -2310,18 +2536,19 @@ async function saveToSupabase() {
     try {
         let result;
         if (_currentReportId) {
-            // UPDATE
-            result = await client
+            // UPDATE (결재 진행중 문서는 서버에서도 수정 차단)
+            let q = client
                 .from('special_defect_reports')
                 .update(payload)
-                .eq('id', _currentReportId)
-                .select();
+                .eq('id', _currentReportId);
+            if (await checkApprovalColumns()) q = q.in('approval_status', ['작성중', '반려']);
+            result = await q.select('id');
         } else {
             // INSERT
             result = await client
                 .from('special_defect_reports')
                 .insert(payload)
-                .select();
+                .select('id');
         }
         
         hideLoading();
@@ -2329,19 +2556,27 @@ async function saveToSupabase() {
         if (result.error) {
             console.error(result.error);
             alert('❌ 저장 실패:\n' + result.error.message + '\n\n테이블이 생성되어 있는지 확인하세요.\n(⚙️ 설정 → Supabase SQL → 복사해서 실행)');
-            return;
+            return false;
+        }
+        if (_currentReportId && (!result.data || !result.data.length)) {
+            alert('⚠️ 저장되지 않았습니다.\n다른 곳에서 결재가 진행되어 문서가 잠겼을 수 있습니다.\n이력 조회에서 다시 불러오세요.');
+            return false;
         }
         
         // 저장된 ID 기억
         if (result.data && result.data[0]) {
             _currentReportId = result.data[0].id;
         }
+        _historyData = [];
+        updateBanner();
         
-        alert(`✅ Supabase에 ${action} 완료\n문서번호: ${docNo}`);
+        if (!silent) alert(`✅ Supabase에 ${action} 완료\n문서번호: ${docNo}`);
+        return true;
     } catch(err) {
         hideLoading();
         console.error(err);
         alert('❌ 저장 중 오류:\n' + err.message);
+        return false;
     }
 }
 
@@ -2393,9 +2628,10 @@ async function loadHistoryList() {
     wrap.innerHTML = '<div class="loading-spinner">이력을 불러오는 중...</div>';
     
     try {
+        const apCols = (await checkApprovalColumns()) ? ', approval_status' : '';
         const { data, error } = await client
             .from('special_defect_reports')
-            .select('id, doc_no, write_date, occur_date, customer, part_no, lot_no, dept, process, grade, writer, final_status, updated_at')
+            .select('id, doc_no, write_date, occur_date, customer, part_no, lot_no, dept, process, grade, writer, final_status, updated_at' + apCols)
             .order('updated_at', { ascending: false })
             .limit(200);
         
@@ -2422,7 +2658,8 @@ function renderHistoryList() {
             (r.part_no || '').toLowerCase().includes(search) ||
             (r.customer || '').toLowerCase().includes(search) ||
             (r.writer || '').toLowerCase().includes(search) ||
-            (r.lot_no || '').toLowerCase().includes(search)
+            (r.lot_no || '').toLowerCase().includes(search) ||
+            (r.approval_status || '').toLowerCase().includes(search)
         );
     }
     
@@ -2448,6 +2685,7 @@ function renderHistoryList() {
         '<th class="col-lot">LOT</th>' +
         '<th class="col-writer">작성자</th>' +
         '<th class="col-status">상태</th>' +
+        '<th class="col-status">결재</th>' +
         '<th class="col-action">관리</th>' +
         '</tr></thead><tbody>';
     
@@ -2460,6 +2698,7 @@ function renderHistoryList() {
             <td class="col-lot" data-label="LOT">${r.lot_no || '-'}</td>
             <td class="col-writer" data-label="작성자">${r.writer || '-'}</td>
             <td data-label="상태"><span class="status-badge ${statusClass(r.final_status)}">${r.final_status || '미설정'}</span></td>
+            <td data-label="결재"><span class="ap-badge ${apBadgeClass(r.approval_status)}">${esc(r.approval_status || '작성중')}</span></td>
             <td data-label="관리"><button class="history-row-btn" onclick="event.stopPropagation(); deleteReport(${r.id}, '${(r.doc_no||'').replace(/'/g,"\\'")}')">삭제</button></td>
         </tr>`;
     });
@@ -2474,9 +2713,9 @@ function renderHistoryList() {
 // =========================================
 async function loadReport(id) {
     const client = getSupabase();
-    if (!client) return;
+    if (!client) return false;
     
-    if (!confirm('이 보고서를 작성 화면에 불러오시겠습니까?\n(현재 작성 중인 내용은 사라집니다)')) return;
+    if (!confirm('이 보고서를 작성 화면에 불러오시겠습니까?\n(현재 작성 중인 내용은 사라집니다)')) return false;
     
     showLoading('보고서를 불러오는 중...');
     
@@ -2491,35 +2730,23 @@ async function loadReport(id) {
         
         if (error) {
             alert('❌ 불러오기 실패:\n' + error.message);
-            return;
+            return false;
         }
         
         applyReportData(data);
         _currentReportId = id;
+        applyApprovalState(data);
         closeHistory();
         
         // 화면 상단으로 스크롤
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
-        // 작은 안내 배너 표시
-        showEditBanner(data.doc_no);
+        return true;
     } catch(err) {
         hideLoading();
         alert('❌ 오류: ' + err.message);
+        return false;
     }
-}
-
-function showEditBanner(docNo) {
-    let banner = document.getElementById('editBanner');
-    if (!banner) {
-        banner = document.createElement('div');
-        banner.id = 'editBanner';
-        banner.style.cssText = 'position:fixed; top:0; left:0; right:0; background:#16a085; color:#fff; padding:10px 20px; text-align:center; z-index:998; font-size:13px; font-weight:600; box-shadow:0 2px 6px rgba(0,0,0,0.2);';
-        document.body.appendChild(banner);
-    }
-    banner.innerHTML = `📝 편집 모드: 문서번호 <strong>${docNo}</strong> 수정 중 &nbsp;|&nbsp; 
-        <a href="#" onclick="newReport(); return false;" style="color:#fff; text-decoration:underline;">새 보고서 작성</a>`;
-    banner.style.display = 'block';
 }
 
 function newReport() {
@@ -2590,6 +2817,11 @@ function applyReportData(data) {
 // 3-5. 보고서 삭제
 // =========================================
 async function deleteReport(id, docNo) {
+    const target = _historyData.find(r => r.id === id);
+    if (target && AP_LOCKED_STATUSES.includes(target.approval_status)) {
+        alert(`🔒 결재 진행중/완료된 문서는 삭제할 수 없습니다.\n(현재 상태: ${target.approval_status})`);
+        return;
+    }
     if (!confirm(`정말 삭제하시겠습니까?\n문서번호: ${docNo}\n\n※ 이 작업은 되돌릴 수 없습니다.`)) return;
     
     const client = getSupabase();
@@ -2617,8 +2849,7 @@ async function deleteReport(id, docNo) {
         // 편집 중이던 보고서를 삭제했다면 새 보고서 모드로
         if (_currentReportId === id) {
             _currentReportId = null;
-            const banner = document.getElementById('editBanner');
-            if (banner) banner.style.display = 'none';
+            applyApprovalState(null);
         }
         
         alert('✅ 삭제 완료');
@@ -2813,6 +3044,556 @@ window.addEventListener('afterprint', function() {
         ta.style.overflow = '';
     });
 });
+
+// =========================================
+// 6. 전자결재 (담당 → 검토 → 승인)
+//   - 결재자/PIN : 사내 공용 user_pin 테이블 (pin_hash = SHA-256(PIN))
+//   - 결재 상태  : special_defect_reports.approval_status / approval_step / approval_line
+//   - 결재 이력  : special_defect_approval_log
+// =========================================
+const AP_LOCKED_STATUSES = ['검토대기', '승인대기', '결재완료'];
+const AP_PREFS_KEY = 'special_defect_ap_prefs';
+let _approval = { status: '작성중', step: 0, line: null };
+let _apUsers = [];
+let _apColumnsOk = null;
+let _decision = null;
+let _inboxData = [];
+let _inboxTab = 'todo';
+
+function apEl(id) { return document.getElementById(id); }
+function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function openModal(id) { apEl(id).classList.add('active'); }
+function closeModal(id) { apEl(id).classList.remove('active'); }
+
+function loadApPrefs() {
+    try { return JSON.parse(localStorage.getItem(AP_PREFS_KEY)) || {}; } catch(e) { return {}; }
+}
+function saveApPrefs(patch) {
+    try { localStorage.setItem(AP_PREFS_KEY, JSON.stringify(Object.assign(loadApPrefs(), patch))); } catch(e) {}
+}
+
+function fmtDT(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d)) return '';
+    const p = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function fmtStampDate(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d)) return '';
+    const p = n => String(n).padStart(2, '0');
+    return `${String(d.getFullYear()).slice(2)}.${p(d.getMonth()+1)}.${p(d.getDate())}`;
+}
+
+// ---- SHA-256 (crypto.subtle 미지원 환경용 폴백 포함) ----
+function _ror(x, n) { return (x >>> n) | (x << (32 - n)); }
+function sha256Fallback(str) {
+    const bytes = Array.from(new TextEncoder().encode(str));
+    const K = [], H = [];
+    const frac = x => ((x - Math.floor(x)) * 4294967296) >>> 0;
+    for (let n = 2, c = 0; c < 64; n++) {
+        let prime = true;
+        for (let d = 2; d * d <= n; d++) if (n % d === 0) { prime = false; break; }
+        if (prime) { if (c < 8) H[c] = frac(Math.pow(n, 1/2)); K[c] = frac(Math.pow(n, 1/3)); c++; }
+    }
+    const bitLen = bytes.length * 8;
+    bytes.push(0x80);
+    while (bytes.length % 64 !== 56) bytes.push(0);
+    for (let i = 7; i >= 0; i--) bytes.push(i >= 4 ? 0 : (bitLen >>> (i * 8)) & 0xff);
+    const w = new Array(64);
+    for (let j = 0; j < bytes.length; j += 64) {
+        for (let i = 0; i < 16; i++) w[i] = ((bytes[j+4*i] << 24) | (bytes[j+4*i+1] << 16) | (bytes[j+4*i+2] << 8) | bytes[j+4*i+3]) >>> 0;
+        for (let i = 16; i < 64; i++) {
+            const s0 = _ror(w[i-15], 7) ^ _ror(w[i-15], 18) ^ (w[i-15] >>> 3);
+            const s1 = _ror(w[i-2], 17) ^ _ror(w[i-2], 19) ^ (w[i-2] >>> 10);
+            w[i] = (w[i-16] + s0 + w[i-7] + s1) >>> 0;
+        }
+        let [a, b, c, d, e, f, g, h] = H;
+        for (let i = 0; i < 64; i++) {
+            const S1 = _ror(e, 6) ^ _ror(e, 11) ^ _ror(e, 25);
+            const ch = (e & f) ^ (~e & g);
+            const t1 = (h + S1 + ch + K[i] + w[i]) >>> 0;
+            const S0 = _ror(a, 2) ^ _ror(a, 13) ^ _ror(a, 22);
+            const mj = (a & b) ^ (a & c) ^ (b & c);
+            const t2 = (S0 + mj) >>> 0;
+            h = g; g = f; f = e; e = (d + t1) >>> 0; d = c; c = b; b = a; a = (t1 + t2) >>> 0;
+        }
+        H[0] = (H[0] + a) >>> 0; H[1] = (H[1] + b) >>> 0; H[2] = (H[2] + c) >>> 0; H[3] = (H[3] + d) >>> 0;
+        H[4] = (H[4] + e) >>> 0; H[5] = (H[5] + f) >>> 0; H[6] = (H[6] + g) >>> 0; H[7] = (H[7] + h) >>> 0;
+    }
+    return H.map(x => x.toString(16).padStart(8, '0')).join('');
+}
+async function sha256Hex(text) {
+    try {
+        if (window.crypto && crypto.subtle) {
+            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+    } catch(e) {}
+    return sha256Fallback(text);
+}
+
+// ---- DB 준비 여부 ----
+async function checkApprovalColumns() {
+    if (_apColumnsOk !== null) return _apColumnsOk;
+    const client = getSupabase();
+    if (!client) return false;
+    try {
+        const { error } = await client.from('special_defect_reports').select('approval_status, approval_step, approval_line').limit(1);
+        _apColumnsOk = !error;
+    } catch(e) { _apColumnsOk = false; }
+    return _apColumnsOk;
+}
+async function requireApprovalDB() {
+    if (await checkApprovalColumns()) return true;
+    _apColumnsOk = null; // 다음에 다시 확인
+    alert('⚠️ 전자결재용 DB 컬럼이 아직 생성되지 않았습니다.\n\n⚙️ 설정 → Supabase SQL 의 [전자결재] 부분을\nSupabase SQL Editor에서 실행한 후 다시 시도하세요.');
+    return false;
+}
+
+// ---- 결재자(user_pin) ----
+async function loadApUsers(force) {
+    if (_apUsers.length && !force) return _apUsers;
+    const client = getSupabase();
+    if (!client) return [];
+    const { data, error } = await client.from('user_pin').select('id, name, dept, position').order('dept').order('name');
+    if (error) { alert('❌ 결재자 목록 조회 실패:\n' + error.message); return []; }
+    _apUsers = data || [];
+    return _apUsers;
+}
+function findApUser(id) { return _apUsers.find(u => String(u.id) === String(id)); }
+function apUserOptions(selectedId, emptyLabel) {
+    const groups = {};
+    _apUsers.forEach(u => { const d = u.dept || '기타'; (groups[d] = groups[d] || []).push(u); });
+    let html = `<option value="">${esc(emptyLabel || '-- 선택 --')}</option>`;
+    Object.keys(groups).sort().forEach(d => {
+        html += `<optgroup label="${esc(d)}">` + groups[d].map(u =>
+            `<option value="${esc(u.id)}" ${String(u.id) === String(selectedId) ? 'selected' : ''}>${esc(u.name)}${u.position ? ' ' + esc(u.position) : ''} (${esc(d)})</option>`
+        ).join('') + '</optgroup>';
+    });
+    return html;
+}
+async function verifyPin(userId, pin) {
+    if (!userId || !pin) return false;
+    const client = getSupabase();
+    if (!client) return false;
+    const { data, error } = await client.from('user_pin').select('pin_hash').eq('id', userId).single();
+    if (error || !data || !data.pin_hash) return false;
+    const h = await sha256Hex(String(pin).trim());
+    return h === String(data.pin_hash).trim().toLowerCase();
+}
+
+async function writeApLog(reportId, action, stepNo, role, actor, comment) {
+    try {
+        const client = getSupabase();
+        const { error } = await client.from('special_defect_approval_log').insert({
+            report_id: reportId, action, step_no: stepNo, step_role: role,
+            actor_name: actor ? actor.name : null, actor_dept: actor ? actor.dept : null,
+            comment: comment || null
+        });
+        if (error) console.warn('결재 이력 저장 실패', error);
+    } catch(e) { console.warn(e); }
+}
+
+// ---- 상태/화면 ----
+function isApprovalLocked() { return AP_LOCKED_STATUSES.includes(_approval.status); }
+function apBadgeClass(s) {
+    return ({ '작성중': 'ap-draft', '검토대기': 'ap-review', '승인대기': 'ap-approve', '결재완료': 'ap-done', '반려': 'ap-reject' })[s] || 'ap-draft';
+}
+function apEntry(line, step) { return Array.isArray(line) ? line.find(x => x.step === step) : null; }
+function apCanWithdraw() {
+    return ['검토대기', '승인대기'].includes(_approval.status) && Array.isArray(_approval.line) &&
+        !_approval.line.some(x => x.step > 1 && x.status === '승인');
+}
+
+function renderApprovalBox() {
+    const st = apEl('approvalState');
+    if (st) {
+        st.className = 'approval-state ap-badge ' + apBadgeClass(_approval.status);
+        st.textContent = _approval.status || '작성중';
+    }
+    const showLine = _approval.status !== '작성중' && Array.isArray(_approval.line);
+    for (let step = 1; step <= 3; step++) {
+        const cell = apEl('apCell' + step);
+        if (!cell) continue;
+        const e = showLine ? apEntry(_approval.line, step) : null;
+        if (!e) { cell.innerHTML = ''; continue; }
+        if (e.status === '생략') { cell.innerHTML = '<div class="sign-wrap"><span class="sign-skip">／</span><span class="sign-date">생략</span></div>'; continue; }
+        if (e.status === '상신' || e.status === '승인') {
+            cell.innerHTML = `<div class="sign-wrap"><div class="sign-stamp">${esc(e.name)}</div><span class="sign-date">${fmtStampDate(e.at)}</span></div>`;
+        } else if (e.status === '반려') {
+            cell.innerHTML = `<div class="sign-wrap"><div class="sign-stamp reject">반려</div><span class="sign-name">${esc(e.name)}</span><span class="sign-date">${fmtStampDate(e.at)}</span></div>`;
+        } else {
+            const waiting = (e.step === _approval.step && ['검토대기', '승인대기'].includes(_approval.status));
+            cell.innerHTML = `<div class="sign-wrap"><span class="sign-name pending">${esc(e.name)}</span>${waiting ? '<span class="sign-wait">결재대기</span>' : ''}</div>`;
+        }
+    }
+}
+
+function setFormLocked(lock) {
+    const rep = apEl('report');
+    rep.classList.toggle('locked', lock);
+    rep.querySelectorAll('input, textarea, select').forEach(el => {
+        if (el.tagName === 'SELECT' || el.type === 'date' || el.type === 'file') el.disabled = lock;
+        else el.readOnly = lock;
+    });
+}
+
+function applyApprovalState(data) {
+    _approval = {
+        status: (data && data.approval_status) || '작성중',
+        step: (data && data.approval_step) || 0,
+        line: (data && data.approval_line) || null
+    };
+    renderApprovalBox();
+    setFormLocked(isApprovalLocked());
+    updateBanner();
+}
+
+function updateBanner() {
+    let banner = apEl('editBanner');
+    if (!_currentReportId) {
+        if (banner) banner.style.display = 'none';
+        document.body.style.paddingTop = '';
+        return;
+    }
+    if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'editBanner';
+        banner.style.cssText = 'position:fixed; top:0; left:0; right:0; color:#fff; padding:8px 16px; text-align:center; z-index:998; font-size:13px; font-weight:600; box-shadow:0 2px 6px rgba(0,0,0,0.2); line-height:2;';
+        document.body.appendChild(banner);
+    }
+    const docNo = esc(apEl('docNo').value || '-');
+    const s = _approval.status;
+    const cur = apEntry(_approval.line, _approval.step);
+    const logBtn = `<button class="banner-btn" onclick="openApLog()">🧾 결재현황</button>`;
+    const newBtn = `<button class="banner-btn" onclick="newReport()">새 보고서</button>`;
+    let color, html;
+    if (s === '검토대기' || s === '승인대기') {
+        color = '#8e44ad';
+        html = `🔒 결재 진행중: <strong>${docNo}</strong> · ${esc(s)} (${esc(cur ? cur.name : '-')})
+            <button class="banner-btn approve" onclick="openDecision('approve')">✅ 승인</button>
+            <button class="banner-btn reject" onclick="openDecision('reject')">↩️ 반려</button>
+            ${apCanWithdraw() ? `<button class="banner-btn" onclick="openDecision('withdraw')">회수</button>` : ''}
+            ${logBtn} ${newBtn}`;
+    } else if (s === '결재완료') {
+        color = '#27ae60';
+        html = `✅ 결재완료 문서: <strong>${docNo}</strong> (읽기 전용) ${logBtn} ${newBtn}`;
+    } else if (s === '반려') {
+        color = '#c0392b';
+        const rj = Array.isArray(_approval.line) ? _approval.line.find(x => x.status === '반려') : null;
+        html = `↩️ 반려 문서: <strong>${docNo}</strong>${rj ? ` · ${esc(rj.name)}: "${esc(rj.comment || '')}"` : ''} — 수정 후 재상신하세요
+            <button class="banner-btn approve" onclick="openSubmitApproval()">📤 재상신</button> ${logBtn} ${newBtn}`;
+    } else {
+        color = '#16a085';
+        html = `📝 편집 모드: 문서번호 <strong>${docNo}</strong> 수정 중
+            <button class="banner-btn" onclick="openSubmitApproval()">📤 결재상신</button> ${newBtn}`;
+    }
+    banner.style.background = color;
+    banner.innerHTML = html;
+    banner.style.display = 'block';
+    document.body.style.paddingTop = (banner.offsetHeight + 20) + 'px';
+}
+
+// ---- 상신 ----
+async function openSubmitApproval() {
+    if (!(await requireApprovalDB())) return;
+    if (isApprovalLocked()) { alert('🔒 이미 결재가 진행중이거나 완료된 문서입니다.'); return; }
+    const docNo = apEl('docNo').value.trim();
+    if (!docNo) { alert('⚠️ 문서번호를 입력하세요.'); apEl('docNo').focus(); return; }
+    if (!confirm('결재 상신 전에 현재 작성 내용을 저장합니다.\n계속하시겠습니까?')) return;
+    const saved = await saveToSupabase(true);
+    if (!saved) return;
+
+    showLoading('결재자 목록을 불러오는 중...');
+    await loadApUsers();
+    hideLoading();
+    if (!_apUsers.length) { alert('⚠️ 등록된 결재자(user_pin)가 없습니다.'); return; }
+
+    const prev = Array.isArray(_approval.line) ? _approval.line : [];
+    const prefs = loadApPrefs();
+    const p1 = apEntry(prev, 1), p2 = apEntry(prev, 2), p3 = apEntry(prev, 3);
+    apEl('apDrafter').innerHTML = apUserOptions((p1 && p1.user_id) || prefs.me, '-- 담당자 선택 --');
+    apEl('apReviewer').innerHTML = apUserOptions((p2 && p2.user_id) || prefs.reviewer, '-- 검토 생략 --');
+    apEl('apApprover').innerHTML = apUserOptions((p3 && p3.user_id) || prefs.approver, '-- 승인자 선택 --');
+    apEl('apDrafterPin').value = '';
+    apEl('apSubmitComment').value = '';
+    apEl('submitDocNo').textContent = docNo;
+    openModal('submitModal');
+    setTimeout(() => apEl('apDrafterPin').focus(), 50);
+}
+
+async function confirmSubmitApproval() {
+    const dId = apEl('apDrafter').value, rId = apEl('apReviewer').value, aId = apEl('apApprover').value;
+    const pin = apEl('apDrafterPin').value;
+    const comment = apEl('apSubmitComment').value.trim();
+    if (!dId) { alert('담당자를 선택하세요.'); return; }
+    if (!aId) { alert('승인자를 선택하세요.'); return; }
+    if (!pin) { alert('담당자 PIN을 입력하세요.'); apEl('apDrafterPin').focus(); return; }
+    if (rId && rId === aId) { alert('검토자와 승인자가 같습니다.\n검토를 생략하려면 [검토 생략]을 선택하세요.'); return; }
+    if (!_currentReportId) { alert('보고서를 먼저 저장하세요.'); return; }
+
+    showLoading('PIN 확인 중...');
+    const ok = await verifyPin(dId, pin);
+    if (!ok) { hideLoading(); alert('❌ PIN이 일치하지 않습니다.'); apEl('apDrafterPin').select(); return; }
+
+    const d = findApUser(dId), r = rId ? findApUser(rId) : null, a = findApUser(aId);
+    const now = new Date().toISOString();
+    const line = [
+        { step: 1, role: '담당', user_id: d.id, name: d.name, dept: d.dept, status: '상신', at: now, comment },
+        r ? { step: 2, role: '검토', user_id: r.id, name: r.name, dept: r.dept, status: '대기', at: null, comment: '' }
+          : { step: 2, role: '검토', user_id: null, name: '', dept: '', status: '생략', at: null, comment: '' },
+        { step: 3, role: '승인', user_id: a.id, name: a.name, dept: a.dept, status: '대기', at: null, comment: '' }
+    ];
+    const nextStep = r ? 2 : 3;
+    const status = r ? '검토대기' : '승인대기';
+
+    showLoading('결재 상신 중...');
+    try {
+        const { data, error } = await getSupabase().from('special_defect_reports')
+            .update({ approval_status: status, approval_step: nextStep, approval_line: line, updated_at: now })
+            .eq('id', _currentReportId)
+            .in('approval_status', ['작성중', '반려'])
+            .select('id');
+        if (error) { hideLoading(); alert('❌ 상신 실패:\n' + error.message); return; }
+        if (!data || !data.length) { hideLoading(); alert('⚠️ 문서 상태가 이미 변경되었습니다.\n이력 조회에서 다시 불러오세요.'); return; }
+        await writeApLog(_currentReportId, '상신', 1, '담당', d, comment);
+        hideLoading();
+        saveApPrefs({ me: dId, reviewer: rId, approver: aId });
+        closeModal('submitModal');
+        _historyData = [];
+        applyApprovalState({ approval_status: status, approval_step: nextStep, approval_line: line });
+        refreshInboxCount();
+        const next = apEntry(line, nextStep);
+        alert(`✅ 결재 상신 완료\n다음 결재자: ${next.role} - ${next.name}`);
+    } catch(err) { hideLoading(); alert('❌ 오류: ' + err.message); }
+}
+
+// ---- 승인 / 반려 / 회수 ----
+function openDecision(type) {
+    const step = _approval.step;
+    const cur = apEntry(_approval.line, step);
+    let actor;
+    if (type === 'withdraw') {
+        if (!apCanWithdraw()) { alert('검토/승인이 이미 진행되어 회수할 수 없습니다.'); return; }
+        actor = apEntry(_approval.line, 1);
+    } else {
+        actor = cur;
+    }
+    if (!actor || !cur) { alert('결재 정보를 확인할 수 없습니다.'); return; }
+    _decision = { type, step, actor };
+    const titles = { approve: '✅ 승인', reject: '↩️ 반려', withdraw: '⏪ 결재 회수' };
+    apEl('decisionTitle').textContent = titles[type];
+    apEl('decisionInfo').innerHTML =
+        `문서번호: <strong>${esc(apEl('docNo').value)}</strong><br>` +
+        `현재 단계: <strong>${esc(cur.role)} (${esc(cur.name)})</strong>` +
+        (type === 'withdraw' ? '<br>※ 회수하면 작성중 상태로 돌아가 수정 후 재상신할 수 있습니다.' : '') +
+        (type === 'approve' && step === 3 ? '<br>※ 최종 승인 시 문서가 확정(잠금)됩니다.' : '');
+    apEl('decisionActor').value = `${actor.name} (${actor.dept || '-'}) · ${type === 'withdraw' ? '담당' : actor.role}`;
+    apEl('decisionPin').value = '';
+    apEl('decisionComment').value = '';
+    apEl('decisionCommentLabel').textContent = type === 'reject' ? '반려 사유 *' : '의견';
+    apEl('decisionComment').placeholder = type === 'reject' ? '반려 사유를 입력하세요 (필수)' : '(선택) 결재 의견';
+    const btn = apEl('decisionBtn');
+    btn.className = 'btn ' + (type === 'approve' ? 'btn-success' : type === 'reject' ? 'btn-danger' : 'btn-secondary');
+    btn.textContent = titles[type];
+    openModal('decisionModal');
+    setTimeout(() => apEl('decisionPin').focus(), 50);
+}
+
+async function confirmDecision() {
+    const dc = _decision;
+    if (!dc) return;
+    const pin = apEl('decisionPin').value;
+    const comment = apEl('decisionComment').value.trim();
+    if (!pin) { alert('PIN을 입력하세요.'); apEl('decisionPin').focus(); return; }
+    if (dc.type === 'reject' && !comment) { alert('반려 사유를 입력하세요.'); apEl('decisionComment').focus(); return; }
+
+    showLoading('PIN 확인 중...');
+    const ok = await verifyPin(dc.actor.user_id, pin);
+    if (!ok) { hideLoading(); alert('❌ PIN이 일치하지 않습니다.\n(' + dc.actor.name + ' 님의 PIN만 사용할 수 있습니다)'); apEl('decisionPin').select(); return; }
+
+    const now = new Date().toISOString();
+    const line = JSON.parse(JSON.stringify(_approval.line));
+    const entry = apEntry(line, dc.step);
+    let status, step, action, logStep, logRole;
+    if (dc.type === 'approve') {
+        entry.status = '승인'; entry.at = now; entry.comment = comment;
+        const next = line.filter(x => x.step > dc.step && x.status === '대기').sort((a, b) => a.step - b.step)[0];
+        if (next) { step = next.step; status = next.step === 2 ? '검토대기' : '승인대기'; }
+        else { step = 99; status = '결재완료'; }
+        action = '승인'; logStep = dc.step; logRole = entry.role;
+    } else if (dc.type === 'reject') {
+        entry.status = '반려'; entry.at = now; entry.comment = comment;
+        status = '반려'; step = 1;
+        action = '반려'; logStep = dc.step; logRole = entry.role;
+    } else {
+        line.forEach(x => { if (x.step > 1 && x.status !== '생략') { x.status = '대기'; x.at = null; x.comment = ''; } });
+        status = '작성중'; step = 0;
+        action = '회수'; logStep = 1; logRole = '담당';
+    }
+
+    showLoading('처리 중...');
+    try {
+        const { data, error } = await getSupabase().from('special_defect_reports')
+            .update({ approval_status: status, approval_step: step, approval_line: line, updated_at: now })
+            .eq('id', _currentReportId)
+            .eq('approval_step', dc.step)
+            .eq('approval_status', _approval.status)
+            .select('id');
+        if (error) { hideLoading(); alert('❌ 처리 실패:\n' + error.message); return; }
+        if (!data || !data.length) { hideLoading(); alert('⚠️ 다른 곳에서 문서 상태가 변경되었습니다.\n이력 조회/결재함에서 다시 불러오세요.'); return; }
+        await writeApLog(_currentReportId, action, logStep, logRole, dc.actor, comment);
+        hideLoading();
+        closeModal('decisionModal');
+        _decision = null;
+        _historyData = [];
+        applyApprovalState({ approval_status: status, approval_step: step, approval_line: line });
+        refreshInboxCount();
+        if (status === '결재완료') alert('✅ 최종 승인 완료 — 결재가 완료되었습니다.');
+        else if (dc.type === 'approve') { const n = apEntry(line, step); alert(`✅ 승인 완료\n다음 결재자: ${n.role} - ${n.name}`); }
+        else if (dc.type === 'reject') alert('↩️ 반려 처리되었습니다.\n담당자가 수정 후 재상신해야 합니다.');
+        else alert('⏪ 회수되었습니다. 수정 후 재상신하세요.');
+    } catch(err) { hideLoading(); alert('❌ 오류: ' + err.message); }
+}
+
+// ---- 결재 현황 ----
+async function openApLog() {
+    if (!_currentReportId) return;
+    const body = apEl('apLogBody');
+    const line = Array.isArray(_approval.line) ? _approval.line : [];
+    let html = `<div class="ap-note">문서번호: <strong>${esc(apEl('docNo').value)}</strong> · 상태: <span class="ap-badge ${apBadgeClass(_approval.status)}">${esc(_approval.status)}</span></div>`;
+    html += '<div class="master-section-title">결재선</div><table class="ap-log"><thead><tr><th>단계</th><th>결재자</th><th>부서</th><th>상태</th><th>일시</th><th>의견</th></tr></thead><tbody>';
+    if (!line.length) html += '<tr><td colspan="6">결재선 없음</td></tr>';
+    line.forEach(x => {
+        html += `<tr><td>${esc(x.role)}</td><td>${esc(x.name || '-')}</td><td>${esc(x.dept || '-')}</td><td>${esc(x.status)}</td><td>${fmtDT(x.at) || '-'}</td><td class="comment">${esc(x.comment || '')}</td></tr>`;
+    });
+    html += '</tbody></table><div class="master-section-title" style="margin-top:16px;">결재 이력</div><div id="apLogList" class="loading-spinner">불러오는 중...</div>';
+    body.innerHTML = html;
+    openModal('apLogModal');
+    try {
+        const { data, error } = await getSupabase().from('special_defect_approval_log')
+            .select('*').eq('report_id', _currentReportId).order('created_at', { ascending: true });
+        const el = apEl('apLogList');
+        if (error) { el.className = 'master-empty'; el.textContent = '이력 조회 실패: ' + error.message; return; }
+        if (!data || !data.length) { el.className = 'master-empty'; el.textContent = '이력이 없습니다.'; return; }
+        el.className = '';
+        el.innerHTML = '<table class="ap-log"><thead><tr><th>일시</th><th>처리</th><th>단계</th><th>처리자</th><th>의견</th></tr></thead><tbody>' +
+            data.map(l => `<tr><td>${fmtDT(l.created_at)}</td><td>${esc(l.action)}</td><td>${esc(l.step_role || '')}</td><td>${esc(l.actor_name || '')}${l.actor_dept ? ' (' + esc(l.actor_dept) + ')' : ''}</td><td class="comment">${esc(l.comment || '')}</td></tr>`).join('') +
+            '</tbody></table>';
+    } catch(e) {}
+}
+
+// ---- 결재함 ----
+async function openInbox() {
+    if (!(await requireApprovalDB())) return;
+    showLoading('결재자 목록을 불러오는 중...');
+    await loadApUsers();
+    hideLoading();
+    apEl('inboxUser').innerHTML = apUserOptions(loadApPrefs().me, '-- 사용자 선택 --');
+    openModal('inboxModal');
+    loadInbox();
+}
+function onInboxUserChange() {
+    saveApPrefs({ me: apEl('inboxUser').value });
+    renderInbox();
+    refreshInboxCount();
+}
+function switchInboxTab(tab) {
+    _inboxTab = tab;
+    document.querySelectorAll('[data-ibtab]').forEach(b => b.classList.toggle('active', b.dataset.ibtab === tab));
+    renderInbox();
+}
+async function fetchApprovalDocs() {
+    const { data, error } = await getSupabase().from('special_defect_reports')
+        .select('id, doc_no, write_date, occur_date, customer, part_no, writer, approval_status, approval_step, approval_line, updated_at')
+        .not('approval_line', 'is', null)
+        .order('updated_at', { ascending: false })
+        .limit(300);
+    if (error) throw error;
+    return data || [];
+}
+async function loadInbox() {
+    const wrap = apEl('inboxListWrap');
+    wrap.innerHTML = '<div class="loading-spinner">결재 문서를 불러오는 중...</div>';
+    try {
+        _inboxData = await fetchApprovalDocs();
+        renderInbox();
+    } catch(err) {
+        wrap.innerHTML = `<div class="master-empty" style="color:#c0392b;">❌ 조회 실패: ${esc(err.message)}</div>`;
+    }
+}
+function inboxFilter(tab, me) {
+    const pending = r => ['검토대기', '승인대기'].includes(r.approval_status);
+    return _inboxData.filter(r => {
+        const line = Array.isArray(r.approval_line) ? r.approval_line : [];
+        const cur = apEntry(line, r.approval_step);
+        if (tab === 'todo') return pending(r) && cur && String(cur.user_id) === String(me);
+        if (tab === 'mine') { const d = apEntry(line, 1); return d && String(d.user_id) === String(me); }
+        if (tab === 'done') return line.some(x => x.step > 1 && String(x.user_id) === String(me) && (x.status === '승인' || x.status === '반려'));
+        return pending(r);
+    });
+}
+function renderInbox() {
+    const wrap = apEl('inboxListWrap');
+    const me = apEl('inboxUser').value;
+    const labels = { todo: '결재 대기', mine: '내가 상신한 문서', done: '내가 결재한 문서', all: '전체 진행중' };
+    document.querySelectorAll('[data-ibtab]').forEach(b => {
+        const t = b.dataset.ibtab;
+        b.textContent = labels[t] + ((me || t === 'all') ? ` (${inboxFilter(t, me).length})` : '');
+    });
+    if (!me && _inboxTab !== 'all') { wrap.innerHTML = '<div class="master-empty">사용자를 선택하세요.</div>'; return; }
+    const list = inboxFilter(_inboxTab, me);
+    if (!list.length) { wrap.innerHTML = '<div class="master-empty">해당 문서가 없습니다.</div>'; return; }
+    let html = '<div class="history-list-scroll"><table class="history-table"><thead><tr>' +
+        '<th class="col-doc-no">문서번호</th><th class="col-customer">고객사</th><th class="col-part">품번</th>' +
+        '<th>담당(상신)</th><th>상신일</th><th class="col-status">결재상태</th><th>현재 결재자</th></tr></thead><tbody>';
+    list.forEach(r => {
+        const line = Array.isArray(r.approval_line) ? r.approval_line : [];
+        const d = apEntry(line, 1);
+        const cur = ['검토대기', '승인대기'].includes(r.approval_status) ? apEntry(line, r.approval_step) : null;
+        html += `<tr onclick="openFromInbox(${Number(r.id)})">
+            <td class="col-doc-no" data-label="문서번호"><strong>${esc(r.doc_no || '-')}</strong></td>
+            <td data-label="고객사">${esc(r.customer || '-')}</td>
+            <td class="col-part" data-label="품번">${esc(r.part_no || '-')}</td>
+            <td data-label="담당">${esc(d ? d.name : '-')}</td>
+            <td data-label="상신일">${d ? fmtDT(d.at).slice(0, 10) : '-'}</td>
+            <td data-label="결재상태"><span class="ap-badge ${apBadgeClass(r.approval_status)}">${esc(r.approval_status || '작성중')}</span></td>
+            <td data-label="현재 결재자">${cur ? esc(cur.role + ' · ' + cur.name) : '-'}</td>
+        </tr>`;
+    });
+    html += '</tbody></table></div>';
+    wrap.innerHTML = html;
+}
+async function openFromInbox(id) {
+    const loaded = await loadReport(id);
+    if (loaded) closeModal('inboxModal');
+}
+async function refreshInboxCount() {
+    const badge = apEl('inboxCount');
+    if (!badge) return;
+    const me = loadApPrefs().me;
+    if (!me || !(await checkApprovalColumns())) { badge.style.display = 'none'; return; }
+    try {
+        const { data, error } = await getSupabase().from('special_defect_reports')
+            .select('id, approval_step, approval_line')
+            .in('approval_status', ['검토대기', '승인대기']);
+        if (error) return;
+        const n = (data || []).filter(r => { const c = apEntry(r.approval_line, r.approval_step); return c && String(c.user_id) === String(me); }).length;
+        badge.textContent = n;
+        badge.style.display = n ? 'inline-block' : 'none';
+    } catch(e) {}
+}
+
+['inboxModal', 'apLogModal'].forEach(id => {
+    apEl(id).addEventListener('click', function(e) { if (e.target === this) closeModal(id); });
+});
+renderApprovalBox();
+refreshInboxCount();
 </script>
 
 </body>
